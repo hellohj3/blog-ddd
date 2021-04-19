@@ -5,6 +5,15 @@ import lombok.*;
 import javax.persistence.*;
 import java.util.List;
 
+/**
+ * Role 테이블 정보
+ * role_id : bigint(20), role PK
+ * name : varchar(255), 권한명
+ * desc : varchar(255), 권한설명
+ *
+ * @author 박상재
+ * @version 1.0
+ */
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Entity
@@ -18,7 +27,7 @@ public class Role {
     private String name;
 
     @Column(nullable = false)
-    private Integer desc;
+    private String desc;
 
     @OneToMany(mappedBy = "role")
     private List<Account> accounts;
@@ -27,7 +36,7 @@ public class Role {
     private List<RoleResource> roleResources;
 
     @Builder
-    public Role(Long id, String name, Integer desc, List<Account> accounts, List<RoleResource> roleResources) {
+    public Role(Long id, String name, String desc, List<Account> accounts, List<RoleResource> roleResources) {
         this.id = id;
         this.name = name;
         this.desc = desc;

@@ -12,6 +12,12 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+/**
+ * 사용자 인증작업을 수행하는 클래스
+ *
+ * @author 박상재
+ * @version 1.0
+ */
 public class CustomAuthenticationProvider implements AuthenticationProvider {
 
     @Autowired

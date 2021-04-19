@@ -10,13 +10,13 @@ import lombok.Setter;
 @Getter @Setter
 public class RoleResourceDto {
 
-    private Integer desc;
+    private Integer orderNumber;
     private String roleName;
     private String resourceName;
 
     @QueryProjection
-    public RoleResourceDto(Integer desc, String roleName, String resourceName) {
-        this.desc = desc;
+    public RoleResourceDto(Integer orderNumber, String roleName, String resourceName) {
+        this.orderNumber = orderNumber;
         this.roleName = roleName;
         this.resourceName = resourceName;
     }

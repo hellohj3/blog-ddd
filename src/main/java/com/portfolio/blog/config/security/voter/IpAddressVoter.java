@@ -12,6 +12,12 @@ import java.util.List;
 
 import static org.springframework.security.access.AccessDecisionVoter.ACCESS_DENIED;
 
+/**
+ * 접근 가능 Ip를 판단하는 Voter
+ *
+ * @author 박상재
+ * @version 1.0
+ */
 public class IpAddressVoter implements AccessDecisionVoter<Object> {
 
     private ResourceService resourceService;

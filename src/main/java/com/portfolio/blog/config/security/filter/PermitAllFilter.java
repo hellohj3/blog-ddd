@@ -24,10 +24,21 @@ public class PermitAllFilter extends FilterSecurityInterceptor {
 
     private List<RequestMatcher> permitAllRequestMatcher = new ArrayList<>();
 
+    /**
+     * 생성자로 전달받은 문자열들을 permitAll 패턴으로 변환한다
+     *
+     * @param permitAllPattern
+     */
     public PermitAllFilter(String... permitAllPattern) {
         createPermitAllPattern(permitAllPattern);
     }
 
+    /**
+     * 현재 사용자 요청에대해 권한 심사가 필요한지 여부를 판단한다
+     *
+     * @param object
+     * @return null = 허용, else = FilterSecurityInterceptor 로 권한처리를 위임
+     */
     @Override
     protected InterceptorStatusToken beforeInvocation(Object object) {
         boolean permitAll = false;
@@ -72,6 +83,11 @@ public class PermitAllFilter extends FilterSecurityInterceptor {
         }
     }
 
+    /**
+     * 문자열 -> permitAll 패턴 생성 클래스
+     *
+     * @param permitAllPattern
+     */
     private void createPermitAllPattern(String... permitAllPattern) {
         for (String pattern : permitAllPattern) {
             permitAllRequestMatcher.add(new AntPathRequestMatcher(pattern));

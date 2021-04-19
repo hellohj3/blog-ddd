@@ -8,6 +8,12 @@ import org.springframework.security.web.util.matcher.RequestMatcher;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+/**
+ * 데이터베이스의 정보를토대로 url 맵핑정보를 생성하는 클래스
+ *
+ * @author 박상재
+ * @version 1.0
+ */
 public class UrlResourcesMapFactoryBean implements FactoryBean<LinkedHashMap<RequestMatcher, List<ConfigAttribute>>> {
 
     private ResourceService resourceService;

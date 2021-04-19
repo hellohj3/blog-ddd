@@ -6,8 +6,19 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Resource 테이블 정보
+ * resource_id : bigint(20), resource PK
+ * name : text, 리소스 표현식(url 경로, method 경로, ...)
+ * type : 리로스 타입(url, method, ...)
+ * order_num : 적용 순서(Security는 적용 순서가 중료함)
+ *
+ * @author 박상재
+ * @version 1.0
+ */
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Entity
@@ -24,17 +35,22 @@ public class Resource {
     private String type;
 
     @Column(nullable = false)
-    private Integer desc;
+    private Integer orderNumber;
 
     @OneToMany(mappedBy = "resource")
     private List<RoleResource> roleResources;
 
     @Builder
-    public Resource(Long id, String name, String type, Integer desc) {
-        this.id = id;
+    public Resource(String name, String type, Integer orderNumber, List<RoleResource> roleResources) {
         this.name = name;
         this.type = type;
-        this.desc = desc;
+        this.orderNumber = orderNumber;
+        this.roleResources = roleResources;
+    }
+
+    public void addRoleResource(RoleResource roleResource) {
+        roleResources.add(roleResource);
+        roleResource.changeResource(this);
     }
 
 }

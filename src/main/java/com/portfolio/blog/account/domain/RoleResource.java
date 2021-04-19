@@ -31,4 +31,15 @@ public class RoleResource {
         this.resource = resource;
     }
 
+    public static RoleResource createRoleResource(Role role, Resource resource) {
+        return RoleResource.builder()
+                .role(role)
+                .resource(resource)
+                .build();
+    }
+
+    public void changeResource(Resource resource) {
+        this.resource = resource;
+    }
+
 }

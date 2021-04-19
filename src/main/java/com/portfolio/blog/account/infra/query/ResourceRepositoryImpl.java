@@ -20,7 +20,7 @@ public class ResourceRepositoryImpl implements ResourceRepositoryQuery {
     public List<RoleResourceDto> findAllResourceByType(String type) {
         return queryFactory
                 .select(new QRoleResourceDto(
-                        resource.desc.as("desc"),
+                        resource.orderNumber.as("orderNumber"),
                         role.name.as("roleName"),
                         resource.name.as("resourceName")
                 ))
@@ -28,7 +28,7 @@ public class ResourceRepositoryImpl implements ResourceRepositoryQuery {
                 .join(resource.roleResources, roleResource)
                 .join(roleResource.role, role)
                 .where(resource.type.eq(type))
-                .orderBy(resource.desc.asc())
+                .orderBy(resource.orderNumber.asc())
                 .fetch();
     }
 }
