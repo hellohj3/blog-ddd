@@ -25,6 +25,7 @@ public class RoleHierarchy {
     private RoleHierarchy parentName;
 
     @OneToMany(mappedBy = "parentName")
+    @Column(nullable = false)
     private Set<RoleHierarchy> roleHierarchy = new HashSet<RoleHierarchy>();
 
     @Builder

@@ -19,79 +19,58 @@ import java.util.List;
  * @version 1.0
  */
 public class PermitAllFilter extends FilterSecurityInterceptor {
-
     private static final String FILTER_APPLIED = "__spring_security_filterSecurityInterceptor_filterApplied";
+    private boolean observeOncePerRequest = true;
+    private List<RequestMatcher> permitAllRequestMatchers = new ArrayList<>();
 
-    private List<RequestMatcher> permitAllRequestMatcher = new ArrayList<>();
-
-    /**
-     * 생성자로 전달받은 문자열들을 permitAll 패턴으로 변환한다
-     *
-     * @param permitAllPattern
-     */
-    public PermitAllFilter(String... permitAllPattern) {
-        createPermitAllPattern(permitAllPattern);
+    public PermitAllFilter(String... permitAllResources) {
+        for (String resource : permitAllResources) {
+            permitAllRequestMatchers.add(new AntPathRequestMatcher(resource));
+        }
     }
 
-    /**
-     * 현재 사용자 요청에대해 권한 심사가 필요한지 여부를 판단한다
-     *
-     * @param object
-     * @return null = 허용, else = FilterSecurityInterceptor 로 권한처리를 위임
-     */
     @Override
     protected InterceptorStatusToken beforeInvocation(Object object) {
+        // 인가처리 전에 permitAll 수행
+
         boolean permitAll = false;
         HttpServletRequest request = ((FilterInvocation) object).getRequest();
-        for (RequestMatcher requestMatcher : permitAllRequestMatcher) {
+
+        for (RequestMatcher requestMatcher : permitAllRequestMatchers) {
             if (requestMatcher.matches(request)) {
+                // 인가처리 필요없는 자원
                 permitAll = true;
                 break;
             }
         }
 
-        if (permitAll) {
-            return null;
-        }
-
-        return super.beforeInvocation(object);
+        // 인가처리 필요없는 (static, templates 모두 포함)자원이면 부모쪽 메서드를 호출하지 않는다.
+        return permitAll ? null : super.beforeInvocation(object);
     }
 
-    @Override
-    public void invoke(FilterInvocation fi) throws IOException, ServletException {
-
-        if ((fi.getRequest() != null) && (fi.getRequest().getAttribute(FILTER_APPLIED) != null)
-                && super.isObserveOncePerRequest()) {
+    public void invoke(FilterInvocation filterInvocation) throws IOException, ServletException {
+        if (isApplied(filterInvocation) && this.observeOncePerRequest) {
             // filter already applied to this request and user wants us to observe
             // once-per-request handling, so don't re-do security checking
-            fi.getChain().doFilter(fi.getRequest(), fi.getResponse());
-        } else {
-            // first time this request being called, so perform security checking
-            if (fi.getRequest() != null) {
-                fi.getRequest().setAttribute(FILTER_APPLIED, Boolean.TRUE);
-            }
-
-            InterceptorStatusToken token = beforeInvocation(fi);
-
-            try {
-                fi.getChain().doFilter(fi.getRequest(), fi.getResponse());
-            } finally {
-                super.finallyInvocation(token);
-            }
-
-            super.afterInvocation(token, null);
+            filterInvocation.getChain().doFilter(filterInvocation.getRequest(), filterInvocation.getResponse());
+            return;
         }
+        // first time this request being called, so perform security checking
+        if (filterInvocation.getRequest() != null && this.observeOncePerRequest) {
+            filterInvocation.getRequest().setAttribute(FILTER_APPLIED, Boolean.TRUE);
+        }
+        InterceptorStatusToken token = beforeInvocation(filterInvocation);
+        try {
+            filterInvocation.getChain().doFilter(filterInvocation.getRequest(), filterInvocation.getResponse());
+        }
+        finally {
+            super.finallyInvocation(token);
+        }
+        super.afterInvocation(token, null);
     }
 
-    /**
-     * 문자열 -> permitAll 패턴 생성 클래스
-     *
-     * @param permitAllPattern
-     */
-    private void createPermitAllPattern(String... permitAllPattern) {
-        for (String pattern : permitAllPattern) {
-            permitAllRequestMatcher.add(new AntPathRequestMatcher(pattern));
-        }
+    private boolean isApplied(FilterInvocation filterInvocation) {
+        return (filterInvocation.getRequest() != null)
+                && (filterInvocation.getRequest().getAttribute(FILTER_APPLIED) != null);
     }
-
 }

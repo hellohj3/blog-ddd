@@ -23,11 +23,8 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
     @Autowired
     private AccountService accountService;
 
+    @Autowired
     private PasswordEncoder passwordEncoder;
-
-    public CustomAuthenticationProvider(PasswordEncoder passwordEncoder) {
-        this.passwordEncoder = passwordEncoder;
-    }
 
     /**
      * 인증작업

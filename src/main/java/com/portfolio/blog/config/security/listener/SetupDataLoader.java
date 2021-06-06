@@ -105,9 +105,9 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
                 roleRepository.save(
                         Role.builder()
                                 .name(roleName)
-                                .desc(roleDesc)
+                                .roleDesc(roleDesc)
                                 .build()
-        ));
+                ));
     }
 
     /**

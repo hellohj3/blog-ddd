@@ -1,6 +1,6 @@
 package com.portfolio.blog.account.application.service;
 
-import com.portfolio.blog.account.application.dto.RoleResourceDto;
+import com.portfolio.blog.account.domain.Resource;
 import com.portfolio.blog.account.infra.ResourceRepository;
 import com.portfolio.blog.account.infra.AccessIpRepository;
 import lombok.RequiredArgsConstructor;
@@ -27,14 +27,15 @@ public class ResourceService {
 
     @Cacheable(value = "resourceList")
     public LinkedHashMap<RequestMatcher, List<ConfigAttribute>> getResourceList() {
-
         LinkedHashMap<RequestMatcher, List<ConfigAttribute>> result = new LinkedHashMap<>();
-        List<RoleResourceDto> resourcesList = resourceRepository.findAllResourceByType("url");
+        List<Resource> resourcesList = resourceRepository.findAllResourceByType("url");
 
         resourcesList.forEach(re -> {
             List<ConfigAttribute> configAttributes = new ArrayList<>();
-            configAttributes.add(new SecurityConfig(re.getRoleName()));
-            result.put(new AntPathRequestMatcher(re.getResourceName()), configAttributes);
+            re.getRoleResources().forEach(rr -> {
+                configAttributes.add(new SecurityConfig(rr.getRole().getName()));
+                result.put(new AntPathRequestMatcher(rr.getResource().getName()), configAttributes);
+            });
         });
 
         return result;

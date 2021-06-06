@@ -1,7 +1,9 @@
 package com.portfolio.blog.account.infra.query;
 
 import com.portfolio.blog.account.application.dto.QRoleResourceDto;
-import com.portfolio.blog.account.application.dto.RoleResourceDto;
+import com.portfolio.blog.account.domain.QResource;
+import com.portfolio.blog.account.domain.QRoleResource;
+import com.portfolio.blog.account.domain.Resource;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 
@@ -17,18 +19,12 @@ public class ResourceRepositoryImpl implements ResourceRepositoryQuery {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<RoleResourceDto> findAllResourceByType(String type) {
+    public List<Resource> findAllResourceByType(String type) {
         return queryFactory
-                .select(new QRoleResourceDto(
-                        resource.orderNumber.as("orderNumber"),
-                        role.name.as("roleName"),
-                        resource.name.as("resourceName")
-                ))
-                .from(resource)
-                .join(resource.roleResources, roleResource)
-                .join(roleResource.role, role)
+                .selectFrom(resource)
+                .join(resource.roleResources, roleResource).fetchJoin()
+                .join(roleResource.role, role).fetchJoin()
                 .where(resource.type.eq(type))
-                .orderBy(resource.orderNumber.asc())
                 .fetch();
     }
 }

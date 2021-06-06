@@ -27,21 +27,20 @@ public class Role {
     private String name;
 
     @Column(nullable = false)
-    private String desc;
+    private String roleDesc;
 
-    @OneToMany(mappedBy = "role")
-    private List<Account> accounts;
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "role")
+    private Account account;
 
     @OneToMany(mappedBy = "role")
     private List<RoleResource> roleResources;
 
     @Builder
-    public Role(Long id, String name, String desc, List<Account> accounts, List<RoleResource> roleResources) {
+    public Role(Long id, String name, String roleDesc, Account account, List<RoleResource> roleResources) {
         this.id = id;
         this.name = name;
-        this.desc = desc;
-        this.accounts = accounts;
+        this.roleDesc = roleDesc;
+        this.account = account;
         this.roleResources = roleResources;
     }
-
 }

@@ -1,9 +1,9 @@
 package com.portfolio.blog.account.infra.query;
 
-import com.portfolio.blog.account.application.dto.RoleResourceDto;
+import com.portfolio.blog.account.domain.Resource;
 
 import java.util.List;
 
 public interface ResourceRepositoryQuery {
-    List<RoleResourceDto> findAllResourceByType(String type);
+    List<Resource> findAllResourceByType(String type);
 }

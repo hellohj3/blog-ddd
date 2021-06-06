@@ -9,7 +9,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 /**
- * 데이터베이스의 정보를토대로 url 맵핑정보를 생성하는 클래스
+ * 데이터베이스의 정보(UrlSecurityMetadataSource)를
+ * 토대로 url 맵핑정보를 생성하는 클래스
  *
  * @author 박상재
  * @version 1.0
@@ -18,7 +19,7 @@ public class UrlResourcesMapFactoryBean implements FactoryBean<LinkedHashMap<Req
 
     private ResourceService resourceService;
 
-    public void setResourcesService(ResourceService resourceService) {
+    public UrlResourcesMapFactoryBean(ResourceService resourceService) {
         this.resourceService = resourceService;
     }
 
@@ -28,6 +29,7 @@ public class UrlResourcesMapFactoryBean implements FactoryBean<LinkedHashMap<Req
         resourcesMap = resourceService.getResourceList();
     }
 
+    // bean 생성 메소드
     public LinkedHashMap<RequestMatcher, List<ConfigAttribute>> getObject() {
         if (resourcesMap == null) {
             init();
@@ -39,6 +41,7 @@ public class UrlResourcesMapFactoryBean implements FactoryBean<LinkedHashMap<Req
         return LinkedHashMap.class;
     }
 
+    // bean 을 싱글톤으로 세팅
     public boolean isSingleton() {
         return true;
     }
