@@ -1,9 +1,6 @@
 package com.portfolio.blog.account.domain;
 
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.Arrays;
@@ -19,9 +16,12 @@ import java.util.List;
  * @author 박상재
  * @version 1.0
  */
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Getter
+
 @Entity
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@Builder
+@Getter
 public class Resource {
 
     @Id @Column(name = "resource_id")
@@ -39,14 +39,6 @@ public class Resource {
 
     @OneToMany(mappedBy = "resource")
     private List<RoleResource> roleResources;
-
-    @Builder
-    public Resource(String name, String type, Integer orderNumber, List<RoleResource> roleResources) {
-        this.name = name;
-        this.type = type;
-        this.orderNumber = orderNumber;
-        this.roleResources = roleResources;
-    }
 
     public void addRoleResource(RoleResource roleResource) {
         roleResources.add(roleResource);

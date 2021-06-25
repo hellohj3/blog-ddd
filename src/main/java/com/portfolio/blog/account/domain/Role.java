@@ -3,6 +3,7 @@ package com.portfolio.blog.account.domain;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -14,9 +15,11 @@ import java.util.List;
  * @author 박상재
  * @version 1.0
  */
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Getter
 @Entity
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@Builder
+@Getter
 public class Role {
 
     @Id @Column(name = "role_id")
@@ -33,14 +36,6 @@ public class Role {
     private Account account;
 
     @OneToMany(mappedBy = "role")
-    private List<RoleResource> roleResources;
+    private List<RoleResource> roleResources = new ArrayList<>();
 
-    @Builder
-    public Role(Long id, String name, String roleDesc, Account account, List<RoleResource> roleResources) {
-        this.id = id;
-        this.name = name;
-        this.roleDesc = roleDesc;
-        this.account = account;
-        this.roleResources = roleResources;
-    }
 }

@@ -1,12 +1,17 @@
 package com.portfolio.blog.account.domain;
 
+import com.portfolio.blog.post.domain.Post;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Getter
 @Entity
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@Builder
+@Getter
 public class Account {
 
     @Id
@@ -28,13 +33,7 @@ public class Account {
     @JoinColumn(name = "role_id")
     private Role role;
 
-    @Builder
-    public Account(String accountId, String password, String name, Integer age, String email, Role role) {
-        this.accountId = accountId;
-        this.password = password;
-        this.name = name;
-        this.age = age;
-        this.email = email;
-        this.role = role;
-    }
+    @OneToMany(mappedBy = "account")
+    private List<Post> posts = new ArrayList<>();
+
 }

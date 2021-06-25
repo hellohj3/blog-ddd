@@ -1,16 +1,16 @@
 package com.portfolio.blog.account.domain;
 
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Getter
 @Entity
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@Builder
+@Getter
 public class AccessIp {
+
 
     @Id @Column(name = "access_ip_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,9 +19,4 @@ public class AccessIp {
     @Column(columnDefinition = "TEXT", nullable = false)
     private String address;
 
-    @Builder
-    public AccessIp(Long id, String address) {
-        this.id = id;
-        this.address = address;
-    }
 }

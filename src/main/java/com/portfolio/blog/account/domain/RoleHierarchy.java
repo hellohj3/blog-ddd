@@ -1,17 +1,16 @@
 package com.portfolio.blog.account.domain;
 
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Getter
 @Entity
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@Builder
+@Getter
 public class RoleHierarchy {
 
     @Id @Column(name = "hierarchy_id")
@@ -27,12 +26,6 @@ public class RoleHierarchy {
     @OneToMany(mappedBy = "parentName")
     @Column(nullable = false)
     private Set<RoleHierarchy> roleHierarchy = new HashSet<RoleHierarchy>();
-
-    @Builder
-    public RoleHierarchy(Long id, String childName) {
-        this.id = id;
-        this.childName = childName;
-    }
 
     public void changeParentRoleName(RoleHierarchy parentName) {
         this.parentName = parentName;

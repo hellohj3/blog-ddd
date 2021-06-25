@@ -1,8 +1,5 @@
 package com.portfolio.blog.account.infra.query;
 
-import com.portfolio.blog.account.application.dto.QRoleResourceDto;
-import com.portfolio.blog.account.domain.QResource;
-import com.portfolio.blog.account.domain.QRoleResource;
 import com.portfolio.blog.account.domain.Resource;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
