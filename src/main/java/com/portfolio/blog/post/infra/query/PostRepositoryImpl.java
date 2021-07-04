@@ -1,7 +1,6 @@
-package com.portfolio.blog.post.infra;
+package com.portfolio.blog.post.infra.query;
 
 import com.portfolio.blog.post.domain.Post;
-import com.portfolio.blog.post.domain.QAttachments;
 import com.portfolio.blog.post.ui.dto.PostResponseDto;
 import com.portfolio.blog.post.ui.dto.PostSearchDto;
 import com.portfolio.blog.post.ui.dto.QPostResponseDto;
@@ -10,7 +9,6 @@ import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Path;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.DateTimePath;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -18,21 +16,18 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.querydsl.QuerydslUtils;
 import org.springframework.data.support.PageableExecutionUtils;
 
 import javax.persistence.EntityManager;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.portfolio.blog.account.domain.QAccount.account;
-import static com.portfolio.blog.post.domain.QAttachments.*;
 import static com.portfolio.blog.post.domain.QPost.post;
 import static org.springframework.util.StringUtils.hasText;
 import static org.springframework.util.StringUtils.isEmpty;
 
-public class PostRepositoryImpl implements PostRepositoryCustom {
+public class PostRepositoryImpl implements PostRepositoryQuery {
 
     private final JPAQueryFactory queryFactory;
 

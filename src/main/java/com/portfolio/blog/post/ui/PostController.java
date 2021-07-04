@@ -22,11 +22,12 @@ public class PostController {
 
     private final PostService postService;
 
+    // 포스트 리스트
     @GetMapping("/posts")
     public String list(PostSearchDto postSearchDto, Pageable pageable, Model model) {
         Page<PostResponseDto> posts = postService.findPosts(postSearchDto, pageable);
         model.addAttribute("posts", posts);
-        return "main";
+        return "front/post/list";
     }
 
     @PostMapping("/post")

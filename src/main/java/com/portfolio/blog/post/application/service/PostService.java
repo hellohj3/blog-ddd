@@ -6,7 +6,6 @@ import com.portfolio.blog.common.util.handler.AttachmentsHandler;
 import com.portfolio.blog.post.domain.Attachments;
 import com.portfolio.blog.post.domain.Post;
 import com.portfolio.blog.post.infra.PostRepository;
-import com.portfolio.blog.post.infra.PostRepositoryImpl;
 import com.portfolio.blog.post.ui.dto.PostRequestDto;
 import com.portfolio.blog.post.ui.dto.PostResponseDto;
 import com.portfolio.blog.post.ui.dto.PostSearchDto;

@@ -309,7 +309,7 @@ class PostRepositoryTest {
                 .title("포스트_타이틀")
                 .build();
         PostSearchDto oneSearchDto = PostSearchDto.builder()
-                .title("포스트_타이틀_01")
+                .title("포스트_타이틀_11")
                 .build();
         PostSearchDto authorSearchDto = PostSearchDto.builder()
                 .author("admin")
@@ -321,17 +321,75 @@ class PostRepositoryTest {
 
         //when
         int size = 5;
-        Pageable pageable = PageRequest.of(1, 5 , Sort.Direction.DESC, "CREATED_DATE");
-        Page<PostResponseDto> findSimpleResult_1 = postRepository.searchPaginationSimple(titleSearchDto, pageable);
-        Page<PostResponseDto> findSimpleResult_2 = postRepository.searchPaginationSimple(oneSearchDto, pageable);
-        Page<PostResponseDto> findEmptySimpleResult = postRepository.searchPaginationSimple(emptySearchDto, pageable);
+        Page<PostResponseDto> findSimpleResult_1 = postRepository.searchPaginationSimple(titleSearchDto, PageRequest.of(1, 5 , Sort.Direction.DESC, "CREATED_DATE"));
+        Page<PostResponseDto> findSimpleResult_2 = postRepository.searchPaginationSimple(oneSearchDto, PageRequest.of(0, 5 , Sort.Direction.DESC, "CREATED_DATE"));
+        Page<PostResponseDto> findEmptySimpleResult = postRepository.searchPaginationSimple(emptySearchDto, PageRequest.of(1, 5 , Sort.Direction.DESC, "CREATED_DATE"));
         List<Post> findAll = postRepository.findAll();
 
         //then
-        System.out.println(findSimpleResult_1.getContent().size());
         assertEquals(findSimpleResult_1.getSize(), size, "요청과 사이즈가 불일치");
         assertEquals(findEmptySimpleResult.getTotalElements(), findAll.size(), "데이터 토탈 사이즈가 불일치");
         assertEquals(findEmptySimpleResult.getTotalPages(), findAll.size()/5, "페이지 사이즈 불일치 1");
         assertEquals(findSimpleResult_1.getTotalPages(), findAll.size()/5, "페이지 사이즈 불일치 2");
+        assertEquals(findSimpleResult_2.getTotalElements(), 1, "1개만 검색되었을때 총 데이터 수 오류");
+        assertEquals(findSimpleResult_2.getTotalPages(), 1, "1개만 검색되었을때 페이지 수 오류");
+    }
+
+    @Test
+    public void 커스텀_조회쿼리_카운트별도() {
+        //given
+        Account account = accountRepository.findById("admin").get();
+        List<Attachments> attachmentsList = new ArrayList<>();
+        Attachments attachments_1 = attachmentsRepository.save(Attachments.builder()
+                .path("경로_1")
+                .origin("첨부파일명_오리진_1")
+                .name(String.valueOf(System.currentTimeMillis()))
+                .size(12121L)
+                .build());
+        Attachments attachments_2 = attachmentsRepository.save(Attachments.builder()
+                .path("경로_2")
+                .origin("첨부파일명_오리진_2")
+                .name(String.valueOf(System.currentTimeMillis()))
+                .size(11112L)
+                .build());
+        attachmentsList.add(attachments_1);
+        attachmentsList.add(attachments_2);
+        for (int i=0; i<20; i++) {
+            PostRequestDto postRequestDto = PostRequestDto.builder()
+                    .title("포스트_타이틀_"+i)
+                    .contents("포스트_내용_"+i)
+                    .build();
+            Post post = Post.createPost(postRequestDto, account, attachmentsList);
+            postRepository.save(post);
+        }
+
+        PostSearchDto titleSearchDto = PostSearchDto.builder()
+                .title("포스트_타이틀")
+                .build();
+        PostSearchDto oneSearchDto = PostSearchDto.builder()
+                .title("포스트_타이틀_11")
+                .build();
+        PostSearchDto authorSearchDto = PostSearchDto.builder()
+                .author("admin")
+                .build();
+        PostSearchDto regDateSearchDto = PostSearchDto.builder()
+                .regDateDesc("2021-07-01")
+                .build();
+        PostSearchDto emptySearchDto = PostSearchDto.builder().build();
+
+        //when
+        int size = 5;
+        Page<PostResponseDto> findSimpleResult_1 = postRepository.searchPaginationComplex(titleSearchDto, PageRequest.of(1, 5 , Sort.Direction.DESC, "CREATED_DATE"));
+        Page<PostResponseDto> findSimpleResult_2 = postRepository.searchPaginationComplex(oneSearchDto, PageRequest.of(0, 5 , Sort.Direction.DESC, "CREATED_DATE"));
+        Page<PostResponseDto> findEmptySimpleResult = postRepository.searchPaginationComplex(emptySearchDto, PageRequest.of(1, 5 , Sort.Direction.DESC, "CREATED_DATE"));
+        List<Post> findAll = postRepository.findAll();
+
+        //then
+        assertEquals(findSimpleResult_1.getSize(), size, "요청과 사이즈가 불일치");
+        assertEquals(findEmptySimpleResult.getTotalElements(), findAll.size(), "데이터 토탈 사이즈가 불일치");
+        assertEquals(findEmptySimpleResult.getTotalPages(), findAll.size()/5, "페이지 사이즈 불일치 1");
+        assertEquals(findSimpleResult_1.getTotalPages(), findAll.size()/5, "페이지 사이즈 불일치 2");
+        assertEquals(findSimpleResult_2.getTotalElements(), 1, "1개만 검색되었을때 총 데이터 수 오류");
+        assertEquals(findSimpleResult_2.getTotalPages(), 1, "1개만 검색되었을때 페이지 수 오류");
     }
 }

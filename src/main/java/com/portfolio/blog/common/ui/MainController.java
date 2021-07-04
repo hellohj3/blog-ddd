@@ -11,4 +11,9 @@ public class MainController {
         return "redirect:/posts";
     }
 
+    @GetMapping("/admin")
+    public String asdmin() {
+        return "redirect:/admin/posts";
+    }
+
 }
