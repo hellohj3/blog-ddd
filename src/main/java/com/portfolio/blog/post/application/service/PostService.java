@@ -12,6 +12,9 @@ import com.portfolio.blog.post.ui.dto.PostSearchDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
@@ -30,8 +33,9 @@ public class PostService {
 
     // 포스트 저장
     public Long savePost(PostRequestDto postRequestDto) throws Exception {
-        // 추 후, 세션벨류로 대체
-        Account account = accountRepository.findById("admin").get();
+        Account account =
+                accountRepository.findById(SecurityContextHolder.getContext().getAuthentication().getName())
+                        .orElseThrow(() -> new InternalAuthenticationServiceException("계정정보 없음"));
         List<Attachments> attachmentsList = attachmentsHandler.parseAttachments(postRequestDto.getAttachmentsList());
         Post savePost = postRepository.save(Post.createPost(postRequestDto, account, attachmentsList));
 
@@ -39,8 +43,7 @@ public class PostService {
     }
 
     // 포스트 수정
-    public Long updatePost(PostRequestDto postRequestDto, Long post_id) throws Exception {
-        Long getId = 0L;
+    public void updatePost(PostRequestDto postRequestDto, Long post_id) throws Exception {
         Optional<Post> findByOptional = postRepository.findById(post_id);
         List<Attachments> attachmentsList = attachmentsHandler.parseAttachments(postRequestDto.getAttachmentsList());
 
@@ -48,8 +51,11 @@ public class PostService {
             Post findPost = findByOptional.get();
             findPost.updatePost(postRequestDto, attachmentsList);
         }
+    }
 
-        return getId;
+    // 포스트 단건조회
+    public PostResponseDto findPost(Long id) {
+        return postRepository.findByIdToDto(id);
     }
 
     // 포스트 리스트 - 페이징

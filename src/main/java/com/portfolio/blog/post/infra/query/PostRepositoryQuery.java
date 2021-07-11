@@ -11,4 +11,5 @@ public interface PostRepositoryQuery {
     List<PostResponseDto> search(PostSearchDto postSearchDto);
     Page<PostResponseDto> searchPaginationSimple(PostSearchDto postSearchDto, Pageable pageable);
     Page<PostResponseDto> searchPaginationComplex(PostSearchDto postSearchDto, Pageable pageable);
+    PostResponseDto findByIdToDto(Long id);
 }

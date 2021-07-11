@@ -13,6 +13,7 @@ public class PostResponseDto {
     private String author;
     private String title;
     private String contents;
+    private List<AttachmentsResponseDto> attachmentsList;
 
     @Builder
     @QueryProjection

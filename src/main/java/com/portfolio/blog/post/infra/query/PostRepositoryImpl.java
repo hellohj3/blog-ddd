@@ -1,6 +1,8 @@
 package com.portfolio.blog.post.infra.query;
 
 import com.portfolio.blog.post.domain.Post;
+import com.portfolio.blog.post.domain.QPost;
+import com.portfolio.blog.post.ui.dto.AttachmentsResponseDto;
 import com.portfolio.blog.post.ui.dto.PostResponseDto;
 import com.portfolio.blog.post.ui.dto.PostSearchDto;
 import com.portfolio.blog.post.ui.dto.QPostResponseDto;
@@ -21,8 +23,11 @@ import org.springframework.data.support.PageableExecutionUtils;
 import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.portfolio.blog.account.domain.QAccount.account;
+import static com.portfolio.blog.post.domain.QAttachments.attachments;
+import static com.portfolio.blog.post.domain.QPost.*;
 import static com.portfolio.blog.post.domain.QPost.post;
 import static org.springframework.util.StringUtils.hasText;
 import static org.springframework.util.StringUtils.isEmpty;
@@ -105,6 +110,24 @@ public class PostRepositoryImpl implements PostRepositoryQuery {
         return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchCount);
     }
 
+    @Override
+    public PostResponseDto findByIdToDto(Long id) {
+        Post post = queryFactory
+                .selectFrom(QPost.post)
+                .leftJoin(QPost.post.account, account)
+                .leftJoin(QPost.post.attachmentsList, attachments)
+                .fetchJoin()
+                .where(QPost.post.id.eq(id))
+                .fetchOne();
+
+        PostResponseDto postResponseDto = post.parseResponseDto();
+        postResponseDto.setAttachmentsList(
+                post.getAttachmentsList().stream().map(a -> a.parseResponseDto()).collect(Collectors.toList())
+        );
+
+        return postResponseDto;
+    }
+
     // 포스트 제목 검색 동적 쿼리
     private BooleanExpression titleContains(String title) {
         return hasText(title) ? post.title.contains(title) : null;
@@ -119,7 +142,7 @@ public class PostRepositoryImpl implements PostRepositoryQuery {
     private List<OrderSpecifier> sortingType(Pageable pageable) {
         List<OrderSpecifier> orders = new ArrayList<>();
 
-        if (!isEmpty(pageable.getSort())) {
+        if (!pageable.getSort().isEmpty()) {
             for (Sort.Order order : pageable.getSort()) {
                 Order direction = order.getDirection().isAscending() ? Order.ASC : Order.DESC;
 

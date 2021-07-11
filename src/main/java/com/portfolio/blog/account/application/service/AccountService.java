@@ -28,8 +28,8 @@ public class AccountService implements UserDetailsService {
     // Account 정보를 조회하고 SecurityUser 를 생성하여 리턴합니다
     @Override
     public UserDetails loadUserByUsername(String accountId) throws UsernameNotFoundException {
-        Optional<List<Account>> findAdmin = Optional.ofNullable(accountRepository.findAccountAndRolesByAccountId(accountId));
-        Account result = findAdmin.orElseThrow(() -> new InternalAuthenticationServiceException("계정정보 없음")).get(0);
+        Optional<Account> findAdmin = Optional.ofNullable(accountRepository.findAccountAndRolesByAccountId(accountId));
+        Account result = findAdmin.orElseThrow(() -> new InternalAuthenticationServiceException("계정정보 없음"));
 
         return new SecurityAccount(result.getAccountId(), result.getPassword(), result.getRole().getName());
     }

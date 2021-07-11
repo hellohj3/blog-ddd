@@ -393,4 +393,38 @@ class PostRepositoryTest {
         assertEquals(findSimpleResult_2.getTotalElements(), 1, "1개만 검색되었을때 총 데이터 수 오류");
         assertEquals(findSimpleResult_2.getTotalPages(), 1, "1개만 검색되었을때 페이지 수 오류");
     }
+
+    @Test
+    public void 포스트_단건_조회() throws Exception {
+        //given
+        PostRequestDto postRequestDto = PostRequestDto.builder()
+                .title("포스트_타이틀_01")
+                .contents("포스트_내용_01")
+                .build();
+        Account account = accountRepository.findById("admin").get();
+        List<Attachments> attachmentsList = new ArrayList<>();
+        Attachments attachments_1 = attachmentsRepository.save(Attachments.builder()
+                .path("경로_1")
+                .origin("첨부파일명_오리진_1")
+                .name(String.valueOf(System.currentTimeMillis()))
+                .size(12121L)
+                .build());
+        Attachments attachments_2 = attachmentsRepository.save(Attachments.builder()
+                .path("경로_2")
+                .origin("첨부파일명_오리진_2")
+                .name(String.valueOf(System.currentTimeMillis()))
+                .size(11112L)
+                .build());
+        attachmentsList.add(attachments_1);
+        attachmentsList.add(attachments_2);
+        Post post = Post.createPost(postRequestDto, account, attachmentsList);
+        Post savePost = postRepository.save(post);
+
+        //when
+        PostResponseDto findDto = postRepository.findByIdToDto(savePost.getId());
+
+        //then
+        assertEquals(savePost.getId(), findDto.getId(), "포스트 객체 다름");
+        assertEquals(savePost.getAttachmentsList().size(), findDto.getAttachmentsList().size(), "포스트 내의 첨부파일 갯수 불일치");
+    }
 }
