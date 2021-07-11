@@ -15,16 +15,23 @@ public class Attachments extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "attachments_id")
+    @Column(name = "attachments_id", nullable = false)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
     private Post post;
 
+    @Column(nullable = false)
     private String path;
+
+    @Column(nullable = false)
     private String origin;
+
+    @Column(nullable = false)
     private String name;
+
+    @Column(nullable = false)
     private Long size;
 
     // 포스트 연결 메소드
@@ -38,11 +45,11 @@ public class Attachments extends BaseTimeEntity {
     }
 
     // AttachmentsResponseDto 로 변환
-    public AttachmentsResponseDto parseResponseDto(Attachments attachments) {
+    public AttachmentsResponseDto parseResponseDto() {
         return AttachmentsResponseDto.builder()
-                .id(attachments.getId())
-                .path(attachments.getPath())
-                .name(attachments.getName())
+                .id(this.getId())
+                .path(this.getPath())
+                .name(this.getName())
                 .build();
     }
 }

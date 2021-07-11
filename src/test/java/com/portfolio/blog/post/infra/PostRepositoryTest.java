@@ -78,6 +78,7 @@ class PostRepositoryTest {
 
     @Test
     public void 포스트_NULL_생성불가() throws Exception {
+        //then
         assertThrows(DataIntegrityViolationException.class, () -> {
             //given
             PostRequestDto emptyPostRequestDto = PostRequestDto.builder().build();
@@ -86,7 +87,7 @@ class PostRepositoryTest {
             Post emptyPost = Post.createPost(emptyPostRequestDto, emptyAccount, emptyAttachmentsList);
 
             //when
-            Post emptySavePost = postRepository.save(emptyPost);
+            postRepository.save(emptyPost);
         });
     }
 
@@ -134,9 +135,9 @@ class PostRepositoryTest {
 
         //then
         assertNotEquals(post.getTitle(), "포스트_타이틀_01", "포스트 타이틀 불일치");
-        assertEquals(post.getTitle(), "포스트_타이틀_02", "포스트 타이틀 불일치");
+        assertEquals(post.getTitle(), updatePostRequestDto.getTitle(), "포스트 타이틀 불일치");
         assertNotEquals(post.getContents(), "포스트_내용_01", "포스트 내용 불일치");
-        assertEquals(post.getContents(), "포스트_내용_02", "포스트 내용 불일치");
+        assertEquals(post.getContents(), updatePostRequestDto.getContents(), "포스트 내용 불일치");
         assertFalse(post.getAttachmentsList().contains(attachments_2), "첨부파일 리스트에 attachments_2 객체 있음");
         assertTrue(post.getAttachmentsList().contains(attachments_3), "첨부파일 리스트에 attachments_3 객체 업음");
     }

@@ -5,6 +5,7 @@ import com.portfolio.blog.common.domain.BaseTimeEntity;
 import com.portfolio.blog.post.ui.dto.PostRequestDto;
 import com.portfolio.blog.post.ui.dto.PostResponseDto;
 import lombok.*;
+import org.springframework.util.StringUtils;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -57,21 +58,30 @@ public class Post extends BaseTimeEntity {
 
     // 포스트 수정 메소드
     public void updatePost(PostRequestDto postRequestDto, List<Attachments> attachmentsList) {
-        int size = this.attachmentsList.size();
 
-        this.title = postRequestDto.getTitle();
-        this.contents = postRequestDto.getContents();
+        this.title = StringUtils.hasText(postRequestDto.getTitle()) ? postRequestDto.getTitle() : this.title;
+        this.contents = StringUtils.hasText(postRequestDto.getContents()) ? postRequestDto.getContents() : this.contents;
         this.updateDate();
 
-        for (Attachments attachments : attachmentsList) {
-            if (!this.attachmentsList.stream().anyMatch(a -> a.getId().equals(attachments.getId()))) {
-                this.addAttachments(attachments);
-            }
-        }
+        if (attachmentsList != null) {
+            int size = this.attachmentsList.size();
 
-        for (Attachments attachments : this.attachmentsList) {
-            if (!attachmentsList.stream().anyMatch(a -> a.getId().equals(attachments.getId()))) {
-                this.removeAttachments(attachments);
+            for (Attachments attachments : attachmentsList) {
+                if (this.attachmentsList.size() > 0) {
+                    if (this.attachmentsList.stream().noneMatch(a -> a.getId().equals(attachments.getId()))) {
+                        this.addAttachments(attachments);
+                    }
+                } else {
+                    this.addAttachments(attachments);
+                }
+            }
+
+            if (this.attachmentsList.size() > 0) {
+                for (Attachments attachments : this.attachmentsList) {
+                    if (attachmentsList.stream().noneMatch(a -> a.getId().equals(attachments.getId()))) {
+                        this.removeAttachments(attachments);
+                    }
+                }
             }
         }
     }
@@ -94,12 +104,12 @@ public class Post extends BaseTimeEntity {
     }
 
     // PostResponseDto 로 변환
-    public PostResponseDto parseResponseDto(Post post) {
+    public PostResponseDto parseResponseDto() {
         return PostResponseDto.builder()
-                .id(post.getId())
-                .author(post.account.getAccountId())
-                .title(post.getTitle())
-                .contents(post.getContents())
+                .id(this.getId())
+                .author(this.account.getAccountId())
+                .title(this.getTitle())
+                .contents(this.getContents())
                 .build();
     }
 }

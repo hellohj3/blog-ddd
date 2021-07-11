@@ -1,3 +1,4 @@
+/*
 package com.portfolio.blog.config.security.listener;
 
 import com.portfolio.blog.account.domain.*;
@@ -14,6 +15,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
+*/
 /**
  * 테스트 데이터 생성 클래스
  * 기본적으로 데이터가 있어야 정상 작동하는
@@ -22,7 +24,8 @@ import java.util.concurrent.atomic.AtomicInteger;
  *
  * @author 박상재
  * @version 1.0
- */
+ *//*
+
 @RequiredArgsConstructor
 @Transactional
 @Component
@@ -49,9 +52,11 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         alreadySetup = true;
     }
 
-    /**
+    */
+/**
      * Security 관련 데이터 셋업
-     */
+     *//*
+
     private void setupSecurityResources() {
         // 최고관리자
         Set<Role> superRoles = new HashSet<>();
@@ -81,9 +86,11 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         createRoleHierarchyIfNotFound(memberRole, adminRole);
     }
 
-    /**
+    */
+/**
      * Ip 접근제한 관련 데이터 셋업
-     */
+     *//*
+
     private void setupAccessIpData() {
         accessIpRepository.findByAddress("127.0.0.1").orElseGet(() ->
                 accessIpRepository.save(
@@ -94,12 +101,14 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         );
     }
 
-    /**
+    */
+/**
      * Role 이 존재하지 않으면 생성하는 메서드
      * @param roleName
      * @param roleDesc
      * @return Role
-     */
+     *//*
+
     public Role createRoleIfNotFound(String roleName, String roleDesc) {
         return roleRepository.findByName(roleName).orElseGet(() ->
                 roleRepository.save(
@@ -110,12 +119,14 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
                 ));
     }
 
-    /**
+    */
+/**
      * Resource / RoleResource 가 존재하지 않으면 생성하는 메서드
      * @param resourceName
      * @param roleSet
      * @param resourceType
-     */
+     *//*
+
     public void createResourceIfNotFound(String resourceName, Set<Role> roleSet, String resourceType) {
         for (Role r : roleSet) {
             Resource resource = resourceRepository.findByName(resourceName).orElseGet(() ->
@@ -132,14 +143,16 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         }
     }
 
-    /**
+    */
+/**
      * Account 가 존재하지 않으면 생성하는 메서드
      * @param accountId
      * @param password
      * @param name
      * @param age
      * @param email
-     */
+     *//*
+
     public void createAccountIfNotFound(String accountId, String password, String name, Integer age, String email, Role role) {
         accountRepository.save(
                 Account.builder()
@@ -153,11 +166,13 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         );
     }
 
-    /**
+    */
+/**
      * 권한 계층 생성하는 메서드
      * @param childRole
      * @param parentRole
-     */
+     *//*
+
     public void createRoleHierarchyIfNotFound(Role childRole, Role parentRole) {
         Optional<RoleHierarchy> roleHierarchy = roleHierarchyRepository.findByChildName(parentRole.getName());
         RoleHierarchy childRoleHierarchy;
@@ -183,3 +198,4 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         childRoleHierarchy.changeParentRoleName(parentRoleHierarchy);
     }
 }
+*/

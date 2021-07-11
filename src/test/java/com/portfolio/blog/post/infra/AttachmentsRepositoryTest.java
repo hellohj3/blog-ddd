@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
@@ -12,8 +13,7 @@ import javax.persistence.PersistenceContext;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Transactional
@@ -39,6 +39,18 @@ class AttachmentsRepositoryTest {
 
         //then
         assertEquals(saveAttachments, attachments_1, "첨부파일 객체 불일치");
+    }
+
+    @Test
+    public void 첨부파일_NULL_생성불가() throws Exception {
+        //then
+        assertThrows(DataIntegrityViolationException.class, () -> {
+            //given
+            Attachments attachments = Attachments.builder().build();
+
+            //when
+            attachmentsRepository.save(attachments);
+        });
     }
 
     @Test
