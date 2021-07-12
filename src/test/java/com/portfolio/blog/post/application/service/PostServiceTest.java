@@ -22,6 +22,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.io.File;
 import java.io.FileInputStream;
 import java.nio.charset.StandardCharsets;
@@ -41,15 +43,17 @@ class PostServiceTest {
     PostService postService;
     @Autowired
     PostRepository postRepository;
+    @PersistenceContext
+    EntityManager em;
 
     @Test
     public void 포스트_등록_서비스() throws Exception {
         //given
         SecurityContextHolder.getContext()
                 .setAuthentication(new UsernamePasswordAuthenticationToken(
-                        "admin",
+                        "super",
                         "1234",
-                        Arrays.asList(new SimpleGrantedAuthority("ROLE_ADMIN"))
+                        Arrays.asList(new SimpleGrantedAuthority("ROLE_SUPER"))
                 ));
         PostRequestDto postRequestDto = PostRequestDto.builder()
                 .title("서비스_등록_테스트")
@@ -221,10 +225,30 @@ class PostServiceTest {
                 .title("포스트_서비스_등록_테스트")
                 .contents("포스트_서비스_등록_테스트")
                 .build();
+        MockMultipartFile file1
+                = new MockMultipartFile(
+                "file1",
+                "hello1.jpeg",
+                String.valueOf(MediaType.IMAGE_JPEG),
+                "Hello, World!".getBytes()
+        );
+        MockMultipartFile file2
+                = new MockMultipartFile(
+                "file2",
+                "hello2.jpeg",
+                String.valueOf(MediaType.IMAGE_JPEG),
+                "Hello, World!".getBytes()
+        );
+        List<MultipartFile> fileList = new ArrayList<>();
+        fileList.add(file1);
+        fileList.add(file2);
+        postRequestDto.setAttachmentsList(fileList);
         Long findId = postService.savePost(postRequestDto);
 
         //when
         String result = postService.deletePost(findId);
+        em.flush();
+        em.clear();
 
         //then
         assertEquals(result, "success", "포스트 삭제 실패");

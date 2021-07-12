@@ -30,6 +30,7 @@ public class PostController {
         return "front/post/list";
     }
 
+    // 포스트 생성
     @PostMapping("/post")
     public String create(PostRequestDto postRequestDto, Model model) throws Exception {
         Long result = postService.savePost(postRequestDto);
