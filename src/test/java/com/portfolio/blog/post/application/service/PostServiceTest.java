@@ -12,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -40,8 +41,6 @@ class PostServiceTest {
     PostService postService;
     @Autowired
     PostRepository postRepository;
-    @Autowired
-    MockMvc mockMvc;
 
     @Test
     public void 포스트_등록_서비스() throws Exception {
@@ -55,7 +54,26 @@ class PostServiceTest {
         PostRequestDto postRequestDto = PostRequestDto.builder()
                 .title("서비스_등록_테스트")
                 .contents("서비스_등록_테스트")
+                .attachmentsList(new ArrayList<>())
                 .build();
+        MockMultipartFile file1
+                = new MockMultipartFile(
+                "file1",
+                "hello1.jpeg",
+                String.valueOf(MediaType.IMAGE_JPEG),
+                "Hello, World!".getBytes()
+        );
+        MockMultipartFile file2
+                = new MockMultipartFile(
+                "file2",
+                "hello2.jpeg",
+                String.valueOf(MediaType.IMAGE_JPEG),
+                "Hello, World!".getBytes()
+        );
+        List<MultipartFile> fileList = new ArrayList<>();
+        fileList.add(file1);
+        fileList.add(file2);
+        postRequestDto.setAttachmentsList(fileList);
 
         //when
         Long result = postService.savePost(postRequestDto);
