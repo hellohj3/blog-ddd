@@ -34,7 +34,7 @@ public class PostController {
     @PostMapping("/post")
     public String create(PostRequestDto postRequestDto, Model model) throws Exception {
         Long result = postService.savePost(postRequestDto);
-        boolean resultFlag = !ObjectUtils.isEmpty(result);
+        boolean resultFlag = ObjectUtils.isEmpty(result);
 
         model.addAttribute("result", (resultFlag) ?
                 "fail" : "success");
