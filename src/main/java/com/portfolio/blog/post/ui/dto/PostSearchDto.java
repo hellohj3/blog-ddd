@@ -10,12 +10,14 @@ public class PostSearchDto {
     private String title;
     private String author;
     private String regDateDesc;
+    private Integer limit;
 
     @Builder
     @QueryProjection
-    public PostSearchDto(String title, String author, String regDateDesc) {
+    public PostSearchDto(String title, String author, String regDateDesc, Integer limit) {
         this.title = title;
         this.author = author;
         this.regDateDesc = regDateDesc;
+        this.limit = limit;
     }
 }

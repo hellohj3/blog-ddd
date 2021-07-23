@@ -1,5 +1,6 @@
 package com.portfolio.blog.post.infra.query;
 
+import com.nimbusds.jose.util.IntegerUtils;
 import com.portfolio.blog.post.domain.Post;
 import com.portfolio.blog.post.domain.QPost;
 import com.portfolio.blog.post.ui.dto.AttachmentsResponseDto;
@@ -51,6 +52,7 @@ public class PostRepositoryImpl implements PostRepositoryQuery {
                         post.contents
                 ))
                 .from(post)
+                .limit(postSearchDto.getLimit())
                 .leftJoin(post.account, account)
                 .fetch();
     }

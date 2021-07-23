@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="front/layouts/layout-ver-1">
+
+<th:block layout:fragment="contents">
+    <section id="intro">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6 col-lg-offset-3 col-md-8 col-md-offset-2 text-center">
+                    <div class="intro animate-box">
+                        <h2>개발자 박상재의 기록공간</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="work">
+        <div class="container">
+            <p class="animate-box text-center" th:if="${posts.size() == 0}" th:text="'포스팅 기록이 없습니다.'"></p>
+            <div class="row" th:unless="${posts.size() == 0}">
+                <div class="col-md-6">
+                    <div class="fh5co-grid animate-box" style="background-image: url(/assets/front/images/work-1.jpg);">
+                        <a class="image-popup text-center" href="#">
+                            <div class="work-title">
+                                <h3>Don’t Just Stand There</h3>
+                                <span>Illustration, Print</span>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="fh5co-grid animate-box" style="background-image: url(/assets/front/images/work-2.jpg);">
+                        <a class="image-popup text-center" href="#">
+                            <div class="work-title">
+                                <h3>Don’t Just Stand There</h3>
+                                <span>Illustration, Print</span>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-md-8">
+                    <div class="fh5co-grid animate-box" style="background-image: url(/assets/front/images/work-5.jpg);">
+                        <a class="image-popup text-center" href="#">
+                            <div class="work-title">
+                                <h3>Don’t Just Stand There</h3>
+                                <span>Illustration, Print</span>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="fh5co-grid animate-box" style="background-image: url(/assets/front/images/work-4.jpg);">
+                        <a class="image-popup text-center" href="#">
+                            <div class="work-title">
+                                <h3>Don’t Just Stand There</h3>
+                                <span>Illustration, Print</span>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="col-md-12">
+                    <div class="fh5co-grid animate-box" style="background-image: url(/assets/front/images/work-3.jpg);">
+                        <a class="image-popup text-center" href="#">
+                            <div class="work-title">
+                                <h3>Ampersand</h3>
+                                <span>Illustration, Print</span>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+</th:block>

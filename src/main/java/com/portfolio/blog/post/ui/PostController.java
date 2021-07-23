@@ -1,7 +1,6 @@
 package com.portfolio.blog.post.ui;
 
 import com.portfolio.blog.post.application.service.PostService;
-import com.portfolio.blog.post.domain.Post;
 import com.portfolio.blog.post.ui.dto.PostRequestDto;
 import com.portfolio.blog.post.ui.dto.PostResponseDto;
 import com.portfolio.blog.post.ui.dto.PostSearchDto;
@@ -13,8 +12,6 @@ import org.springframework.ui.Model;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-
-import java.util.List;
 
 @Controller
 @RequiredArgsConstructor

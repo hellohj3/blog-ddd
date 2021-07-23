@@ -53,7 +53,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final CustomAuthenticationFailureHandler authenticationFailureHandler;
 
     // permitAll 시켜야하는 자원들
-    private String[] permitAllResources = {"/","/login","/account/login/**","/assets/**"};
+    private String[] permitAllResources = {"/","/login","/posts","/account/login/**","/assets/**","/assets/front/**"};
 
     @Bean
     // 패스워드 인코더 Bean 생성

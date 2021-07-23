@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="admin/layouts/layout-ver-1">
+
+<th:block layout:fragment="contents">
+    <style>
+        .ck .ck-editor {
+            width: 100%;
+        }
+        .ck-editor__editable {
+            min-height: 400px;
+        }
+    </style>
+    <script src="https://cdn.ckeditor.com/ckeditor5/29.0.0/classic/ckeditor.js"></script>
+    <div class="content">
+        <div class="row">
+            <div class="col-md-10">
+                <div class="card card-user">
+                    <div class="card-header">
+                        <h5 class="card-title">포스트 등록</h5>
+                    </div>
+                    <div class="card-body">
+                        <form th:action="@{/admin/post}" th:object="${post}" method="post" enctype="multipart/form-data">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label th:for="title">제목</label>
+                                        <input type="text" th:field="*{title}" class="form-control" placeholder="제목을 입력해주세요.">
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label th:for="contents">내용</label>
+                                        <textarea th:field="*{contents}" class="form-control"></textarea>
+                                        <script src="/assets/admin/js/ckeditor-ver-5.js"></script>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="update ml-auto mr-auto">
+                                    <button type="submit" class="btn btn-primary btn-round">Update Profile</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</th:block>
