@@ -11,9 +11,15 @@ class UploadAdapter {
         })))
     }
 
+    abort() {
+        if (this.xhr) {
+            this.xhr.abort();
+        }
+    }
+
     _initRequest() {
         const xhr = this.xhr = new XMLHttpRequest();
-        xhr.open('POST', 'http://localhost:8080//api/image/upload', true);
+        xhr.open('POST', 'http://localhost:8080/admin/attachment', true);
         xhr.responseType = 'json';
     }
 
