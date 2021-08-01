@@ -2,13 +2,13 @@ package com.portfolio.blog.post.domain;
 
 import com.portfolio.blog.account.domain.Account;
 import com.portfolio.blog.common.domain.BaseTimeEntity;
-import com.portfolio.blog.post.ui.dto.PostRequestDto;
-import com.portfolio.blog.post.ui.dto.PostResponseDto;
+import com.portfolio.blog.post.ui.dto.PostDto;
 import lombok.*;
 import org.springframework.util.StringUtils;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 @Entity
@@ -40,10 +40,10 @@ public class Post extends BaseTimeEntity {
     private Integer viewCount;
 
     // 포스트 생성 메소드
-    public static Post createPost(PostRequestDto postRequestDto, Account account, List<Attachments> attachmentsList) {
+    public static Post createPost(PostDto postDto, Account account, LinkedList<Attachments> attachmentsList) {
         Post post = Post.builder()
-                .title(postRequestDto.getTitle())
-                .contents(postRequestDto.getContents())
+                .title(postDto.getTitle())
+                .contents(postDto.getContents())
                 .account(account)
                 .attachmentsList(new ArrayList<>())
                 .viewCount(0)
@@ -57,33 +57,11 @@ public class Post extends BaseTimeEntity {
     }
 
     // 포스트 수정 메소드
-    public void updatePost(PostRequestDto postRequestDto, List<Attachments> attachmentsList) {
+    public void updatePost(PostDto postDto) {
 
-        this.title = StringUtils.hasText(postRequestDto.getTitle()) ? postRequestDto.getTitle() : this.title;
-        this.contents = StringUtils.hasText(postRequestDto.getContents()) ? postRequestDto.getContents() : this.contents;
+        this.title = StringUtils.hasText(postDto.getTitle()) ? postDto.getTitle() : this.title;
+        this.contents = StringUtils.hasText(postDto.getContents()) ? postDto.getContents() : this.contents;
         this.updateDate();
-
-        if (attachmentsList != null) {
-            int size = this.attachmentsList.size();
-
-            for (Attachments attachments : attachmentsList) {
-                if (this.attachmentsList.size() > 0) {
-                    if (this.attachmentsList.stream().noneMatch(a -> a.getId().equals(attachments.getId()))) {
-                        this.addAttachments(attachments);
-                    }
-                } else {
-                    this.addAttachments(attachments);
-                }
-            }
-
-            if (this.attachmentsList.size() > 0) {
-                for (Attachments attachments : this.attachmentsList) {
-                    if (attachmentsList.stream().noneMatch(a -> a.getId().equals(attachments.getId()))) {
-                        this.removeAttachments(attachments);
-                    }
-                }
-            }
-        }
     }
 
     // 뷰카운트 증가 메소드
@@ -104,8 +82,8 @@ public class Post extends BaseTimeEntity {
     }
 
     // PostResponseDto 로 변환
-    public PostResponseDto parseResponseDto() {
-        return PostResponseDto.builder()
+    public PostDto parseDto() {
+        return PostDto.builder()
                 .id(this.getId())
                 .author(this.account.getAccountId())
                 .title(this.getTitle())

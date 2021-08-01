@@ -3,10 +3,7 @@ package com.portfolio.blog.post.infra.query;
 import com.nimbusds.jose.util.IntegerUtils;
 import com.portfolio.blog.post.domain.Post;
 import com.portfolio.blog.post.domain.QPost;
-import com.portfolio.blog.post.ui.dto.AttachmentsResponseDto;
-import com.portfolio.blog.post.ui.dto.PostResponseDto;
-import com.portfolio.blog.post.ui.dto.PostSearchDto;
-import com.portfolio.blog.post.ui.dto.QPostResponseDto;
+import com.portfolio.blog.post.ui.dto.*;
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
@@ -23,6 +20,7 @@ import org.springframework.data.support.PageableExecutionUtils;
 
 import javax.persistence.EntityManager;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -43,9 +41,9 @@ public class PostRepositoryImpl implements PostRepositoryQuery {
 
     // 페이징 없는 리스트 조회
     @Override
-    public List<PostResponseDto> search(PostSearchDto postSearchDto) {
+    public List<PostDto> search(PostSearchDto postSearchDto) {
         return queryFactory
-                .select(new QPostResponseDto(
+                .select(new QPostDto(
                         post.id,
                         post.account.accountId,
                         post.title,
@@ -59,9 +57,9 @@ public class PostRepositoryImpl implements PostRepositoryQuery {
 
     // 페이징 및 카운트를 동시에 날리는 리스트 조회
     @Override
-    public Page<PostResponseDto> searchPaginationSimple(PostSearchDto postSearchDto, Pageable pageable) {
-        QueryResults<PostResponseDto> results = queryFactory
-                .select(new QPostResponseDto(
+    public Page<PostDto> searchPaginationSimple(PostSearchDto postSearchDto, Pageable pageable) {
+        QueryResults<PostDto> results = queryFactory
+                .select(new QPostDto(
                         post.id,
                         post.account.accountId,
                         post.title,
@@ -76,7 +74,7 @@ public class PostRepositoryImpl implements PostRepositoryQuery {
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetchResults();
-        List<PostResponseDto> content = results.getResults();
+        List<PostDto> content = results.getResults();
         long total = results.getTotal();
 
         return new PageImpl<>(content, pageable, total);
@@ -84,9 +82,9 @@ public class PostRepositoryImpl implements PostRepositoryQuery {
 
     // 페이징 및 카운트를 별도로 날리는 리스트 조회
     @Override
-    public Page<PostResponseDto> searchPaginationComplex(PostSearchDto postSearchDto, Pageable pageable) {
-        List<PostResponseDto> content = queryFactory
-                .select(new QPostResponseDto(
+    public Page<PostDto> searchPaginationComplex(PostSearchDto postSearchDto, Pageable pageable) {
+        List<PostDto> content = queryFactory
+                .select(new QPostDto(
                         post.id,
                         post.account.accountId,
                         post.title,
@@ -113,7 +111,7 @@ public class PostRepositoryImpl implements PostRepositoryQuery {
     }
 
     @Override
-    public PostResponseDto findByIdToDto(Long id) {
+    public PostDto findByIdToDto(Long id) {
         Post post = queryFactory
                 .selectFrom(QPost.post)
                 .leftJoin(QPost.post.account, account)
@@ -122,12 +120,12 @@ public class PostRepositoryImpl implements PostRepositoryQuery {
                 .where(QPost.post.id.eq(id))
                 .fetchOne();
 
-        PostResponseDto postResponseDto = post.parseResponseDto();
-        postResponseDto.setAttachmentsList(
-                post.getAttachmentsList().stream().map(a -> a.parseResponseDto()).collect(Collectors.toList())
+        PostDto postDto = post.parseDto();
+        postDto.setAttachmentsList(
+                (LinkedList) post.getAttachmentsList().stream().map(a -> a.parseDto()).collect(Collectors.toList())
         );
 
-        return postResponseDto;
+        return postDto;
     }
 
     // 포스트 제목 검색 동적 쿼리

@@ -24,7 +24,7 @@ class AttachmentsRepositoryTest {
     @PersistenceContext
     EntityManager em;
 
-    @Test
+    /*@Test
     public void 첨부파일_생성() throws Exception {
         //given
         Attachments attachments_1 = attachmentsRepository.save(Attachments.builder()
@@ -107,6 +107,6 @@ class AttachmentsRepositoryTest {
 
         //then
         assertTrue(findEntity.isEmpty(), "첨부파일 객체 삭제 실패");
-    }
+    }*/
 
 }

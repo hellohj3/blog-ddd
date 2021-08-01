@@ -1,6 +1,7 @@
 package com.portfolio.blog.common.util.handler;
 
 import com.portfolio.blog.post.domain.Attachments;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
@@ -12,12 +13,12 @@ import java.util.List;
 
 @Component
 public class AttachmentsHandler {
+    @Value("${env.imageUploadSrc}")
+    String path;
+    Attachments attachments = Attachments.builder().build();
 
-    public List<Attachments> parseAttachments(List<MultipartFile> files) throws Exception {
-        List<Attachments> attachmentsList = new ArrayList<>();
-
-        if (!CollectionUtils.isEmpty(files)) {
-            String path = "D:\\tmp\\blog\\attachments";
+    public Attachments parseAttachments(MultipartFile multipartFile) throws Exception {
+        if (!multipartFile.isEmpty()) {
             File file  = new File(path);
 
             // 디렉토리 없을시 생성
@@ -26,48 +27,56 @@ public class AttachmentsHandler {
 
                 if (!wasSuccessful)
                     System.out.println("file : was not successful");
-
             }
 
-            // 다중파일 처리
-            for (MultipartFile multipartFile : files) {
-                String originExtension = "";
-                String contentType = multipartFile.getContentType();
+            // 단일파일 처리
+            String originExtension = "";
+            String contentType = multipartFile.getContentType();
 
-                // 확장자명 없으면 브레이크
-                if (ObjectUtils.isEmpty(contentType))
-                    break;
+            // 확장자명 없으면 브레이크
+            if (ObjectUtils.isEmpty(contentType))
+                throw new IllegalArgumentException("존재하지 않는 확장자");
 
-                // jpeg, png 만 허용
-                if (contentType.contains("image/jpeg"))
-                    originExtension = ".jpg";
-                else if (contentType.contains("image/png"))
-                    originExtension = ".png";
-                else
-                    break;
+            // jpeg, png 만 허용
+            if (contentType.contains("image/jpeg"))
+                originExtension = ".jpg";
+            else if (contentType.contains("image/png"))
+                originExtension = ".png";
+            else
+                throw new IllegalArgumentException("지원하지 않는 확장자");
 
-                // 첨부파일 객체 생성
-                String newFileName = String.valueOf(System.currentTimeMillis()) + originExtension;
-                Attachments attachments = Attachments.builder()
-                        .path(path)
-                        .origin(multipartFile.getOriginalFilename())
-                        .name(newFileName)
-                        .size(multipartFile.getSize())
-                        .build();
+            // 파일 저장
+            String newFileName = String.valueOf(System.currentTimeMillis()) + originExtension;
+            file = new File(path + "\\" + newFileName);
+            multipartFile.transferTo(file);
 
-                // 리스트에 추가
-                attachmentsList.add(attachments);
+            // 파일 권한 설정
+            file.setWritable(true);
+            file.setReadable(true);
 
-                // 파일 저장
-                file = new File(path + newFileName);
-                multipartFile.transferTo(file);
+            // 첨부파일 객체 생성
+            attachments = Attachments.builder()
+                    .path(path)
+                    .origin(multipartFile.getOriginalFilename())
+                    .name(newFileName)
+                    .size(multipartFile.getSize())
+                    .build();
+        }
+        return attachments;
+    }
 
-                // 파일 권한 설정
-                file.setWritable(true);
-                file.setReadable(true);
+    public void deleteFile(String fileName) throws Exception {
+        if (!fileName.isEmpty()) {
+            File file = new File(path + "\\" + fileName);
+
+            if (file.exists()) {
+                if (file.delete()) {
+                    System.out.println("file : was deleted");
+                } else {
+                    System.out.println("file : was not deleted");
+                }
             }
         }
-        return attachmentsList;
     }
 
 }

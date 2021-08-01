@@ -6,16 +6,22 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Setter
-public class AttachmentsResponseDto {
+public class AttachmentsDto {
     private Long id;
     private String path;
+    private String origin;
     private String name;
+    private String extension;
+    private Long size;
 
     @Builder
     @QueryProjection
-    public AttachmentsResponseDto(Long id, String path, String name) {
+    public AttachmentsDto(Long id, String path, String origin, String name, String extension, Long size) {
         this.id = id;
         this.path = path;
+        this.origin = origin;
         this.name = name;
+        this.extension = extension;
+        this.size = size;
     }
 }

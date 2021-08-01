@@ -26,41 +26,27 @@
                                 <th>조회수</th>
                                 </thead>
                                 <tbody>
-                                <tr th:if="${posts.isEmpty()}">
+                                <tr th:if="${list.isEmpty()}">
                                     <td colspan="5" style="text-align: center">포스팅 기록이 없습니다.</td>
                                 </tr>
-                                <th:block th:unless="${posts.isEmpty()}">
-                                    <tr th:each="post: ${posts.content}">
+                                <th:block th:unless="${list.isEmpty()}">
+                                    <tr th:each="post: ${list}">
                                         <td>No</td>
-                                        <td th:text="${post.getTitle()}"></td>
-                                        <td th:text="${post.getAuthor()}"></td>
+                                        <td th:text="${post.title}"></td>
+                                        <td th:text="${post.author}"></td>
                                         <td>작성일</td>
                                         <td>조회수</td>
                                     </tr>
                                 </th:block>
                                 </tbody>
                             </table>
-                            <div class="pagination-container" th:if="${!posts.isEmpty()}">
-                                <div class="pagination p1"
-                                     th:width="
-                                            currentPage = ${posts.pageable.pageNumber},
-                                            pageSize = ${posts.pageable.pageSize},
-                                            totalPage = ${posts.totalPages},
-                                            startPage = ${T(Math).floor(currentPage / pageSize) * pageSize + 1},
-                                            temp = ${startPage + pageSize -1},
-                                            endPage = (${temp > totalPage ? totalPage : temp})"
-                                >
-                                    <ul>
-                                        <li th:classappend="${posts.first} ? 'disabled'">
-                                            <a th:href="${posts.first} ? '#' : @{/admin/posts(page=${#numbers.formatDecimal(startPage - pageSize, 0, -1)})}"><</a>
-                                        </li>
-                                        <li th:each="page: ${#numbers.sequence(startPage, endPage)}" th:classappend="${page == pageNumber + 1} ? 'is-active'">
-                                            <a th:href="@{/admin/posts(page=1)}"><</a>
-                                        </li>
-                                        <li th:classappend="${posts.last} ? 'disabled'">
-                                            <a th:href="${posts.last} ? '#' : @{/admin/posts(page=${#numbers.formatDecimal(startPage - pageSize, 0, -1)})}">></a>
-                                        </li>
-                                    </ul>
+                            <div class="pagination-container" th:if="${not #lists.isEmpty(pagination)}">
+                                <div class="pagination p1" style="display: block;">
+                                    <a th:classappend="${pagination.first eq true} ? 'disabled'" th:href="${pagination.first eq true} ? '#' : @{/admin/posts(page=${#numbers.formatDecimal(pagination.startPage - pagination.pageSize, 0, -1)})}">&lt;</a>
+                                    <th:block th:each="page: ${#numbers.sequence(pagination.startPage, pagination.endPage)}">
+                                        <a th:classappend="${page == pagination.currentPage + 1} ? 'is-active'" th:text="${page}" th:href="@{/admin/posts(page=1)}"></a>
+                                    </th:block>
+                                    <a th:classappend="${pagination.last eq true} ? 'disabled'" th:href="${pagination.last} ? '#' : @{/admin/posts(page=${#numbers.formatDecimal(pagination.startPage - pagination.pageSize, 0, -1)})}">></a>
                                 </div>
                             </div>
                         </div>

@@ -1,19 +1,10 @@
 package com.portfolio.blog.post.domain;
 
-import com.portfolio.blog.post.ui.dto.AttachmentsResponseDto;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Transactional
@@ -22,7 +13,7 @@ class AttachmentsTest {
     @PersistenceContext
     EntityManager em;
 
-    @Test
+    /*@Test
     public void 첨부파일_객체_생성_조회() throws Exception {
         //given
         Attachments attachments_1 = Attachments.builder()
@@ -174,6 +165,6 @@ class AttachmentsTest {
 
         //then
         assertEquals(attachments_1.parseResponseDto().getClass(), AttachmentsResponseDto.class, "DTO 변환 리턴값 불일치");
-    }
+    }*/
 
 }

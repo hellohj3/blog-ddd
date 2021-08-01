@@ -1,10 +1,9 @@
 package com.portfolio.blog.common.ui;
 
 import com.portfolio.blog.post.application.service.PostService;
-import com.portfolio.blog.post.ui.dto.PostResponseDto;
+import com.portfolio.blog.post.ui.dto.PostDto;
 import com.portfolio.blog.post.ui.dto.PostSearchDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -23,7 +22,7 @@ public class MainController {
     @GetMapping("/")
     public String main(Model model,
                        @PageableDefault(page = 0, size = 5, sort = "CREATED_DATE", direction = Sort.Direction.DESC) Pageable pageable) {
-        List<PostResponseDto> posts = postService.findPosts(PostSearchDto.builder().build(), pageable).getContent();
+        List<PostDto> posts = postService.findPosts(PostSearchDto.builder().build(), pageable).getContent();
 
         model.addAttribute("posts", posts);
 
