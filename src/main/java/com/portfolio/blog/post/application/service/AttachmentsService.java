@@ -9,6 +9,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -25,15 +28,14 @@ public class AttachmentsService {
         return savedAttachments.parseDto();
     }
 
-    // 첨부파일 수정
-    /*public AttachmentsResponseDto updateAttachments(AttachmentsRequestDto requestDto) throws Exception {
-        Optional<Attachments> findByOptional = attachmentsRepository.findById(requestDto.getId());
-        Attachments findByAttachments = findByOptional.orElseThrow(() -> new Exception("첨부파일 없음"));
-        String result = findByAttachments.updateAttachments(requestDto);
+    // 첨부파일 리스트 (in names)
+    public List<AttachmentsDto> findAttachmentsByNames(List<String> names) {
+        List<AttachmentsDto> attachmentsDtos = new ArrayList<>();
+        List<Attachments> findByAttachmentsList = attachmentsRepository.findByNameIn(names);
 
-        if (!"fail".equals(result))
-            attachmentsHandler.deleteFile(result);
+        for (Attachments attachments : findByAttachmentsList)
+            attachmentsDtos.add(attachments.parseDto());
 
-        return findByAttachments.parseResponseDto();
-    }*/
+        return attachmentsDtos;
+    }
 }

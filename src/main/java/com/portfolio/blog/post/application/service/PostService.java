@@ -2,6 +2,7 @@ package com.portfolio.blog.post.application.service;
 
 import com.portfolio.blog.account.domain.Account;
 import com.portfolio.blog.account.infra.AccountRepository;
+import com.portfolio.blog.common.util.handler.AttachmentsHandler;
 import com.portfolio.blog.post.domain.Attachments;
 import com.portfolio.blog.post.domain.Post;
 import com.portfolio.blog.post.infra.AttachmentsRepository;
@@ -20,6 +21,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -28,6 +30,7 @@ public class PostService {
 
     private final PostRepository postRepository;
     private final AccountRepository accountRepository;
+    private final AttachmentsHandler attachmentsHandler;
     private final AttachmentsRepository attachmentsRepository;
 
     // 포스트 저장
@@ -36,14 +39,15 @@ public class PostService {
         Account account =
                 accountRepository.findById(SecurityContextHolder.getContext().getAuthentication().getName())
                         .orElseThrow(() -> new InternalAuthenticationServiceException("계정정보 없음"));
-        LinkedList<AttachmentsDto> attachmentsDtos = postDto.getAttachmentsList();
-        LinkedList<Attachments> attachmentsList = new LinkedList<>();
+        List<AttachmentsDto> attachmentsDtos = postDto.getAttachmentsList();
+        List<Attachments> attachmentsList = new ArrayList<>();
 
         for (AttachmentsDto attachmentsDto : attachmentsDtos) {
             Optional<Attachments> findByOptional = attachmentsRepository.findById(attachmentsDto.getId());
             Attachments findByAttachments = findByOptional.orElseThrow(() -> new IllegalArgumentException("첨부파일 존재하지 않음"));
             attachmentsList.add(findByAttachments);
         }
+        attachmentsHandler.copyFile(attachmentsDtos.stream().map(AttachmentsDto::getName).collect(Collectors.toList()));
         Post savePost = postRepository.save(Post.createPost(postDto, account, attachmentsList));
 
         return (ObjectUtils.isEmpty(savePost)) ? 0L : savePost.getId();
@@ -51,12 +55,13 @@ public class PostService {
 
     // 포스트 수정
     @Transactional
-    public void updatePost(PostDto postDto, Long post_id) throws Exception {
-        Optional<Post> findByOptional = postRepository.findById(post_id);
+    public void updatePost(PostDto postDto) throws Exception {
+        Optional<Post> findByOptional = postRepository.findById(postDto.getId());
 
         if (findByOptional.isPresent()) {
             Post findPost = findByOptional.get();
-            findPost.updatePost(postDto);
+            List<String> deleteAttachmentsIds = findPost.updatePost(postDto);
+            attachmentsHandler.deleteRealFileBulk(deleteAttachmentsIds);
         }
     }
 
@@ -71,11 +76,23 @@ public class PostService {
     }
 
     // 포스트 삭제
-    public String deletePost(Long id) {
+    @Transactional
+    public String deletePost(Long id) throws Exception {
         Optional<Post> findByOptional = postRepository.findById(id);
 
         if (findByOptional.isPresent()) {
-            postRepository.delete(findByOptional.get());
+            Post findPost = findByOptional.get();
+
+            if (findPost.getAttachmentsList().size() > 0) {
+                List<Attachments> attachmentsList = findPost.getAttachmentsList();
+
+                for (int i=0; i<attachmentsList.size(); i++) {
+                    attachmentsHandler.deleteRealFileSingle(attachmentsList.get(i).getName());
+                    attachmentsRepository.delete(attachmentsList.get(i));
+                }
+            }
+
+            postRepository.delete(findPost);
             return "success";
         } else {
             return "fail";

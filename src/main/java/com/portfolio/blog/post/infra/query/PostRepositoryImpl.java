@@ -122,7 +122,7 @@ public class PostRepositoryImpl implements PostRepositoryQuery {
 
         PostDto postDto = post.parseDto();
         postDto.setAttachmentsList(
-                (LinkedList) post.getAttachmentsList().stream().map(a -> a.parseDto()).collect(Collectors.toList())
+                post.getAttachmentsList().stream().map(a -> a.parseDto()).collect(Collectors.toList())
         );
 
         return postDto;

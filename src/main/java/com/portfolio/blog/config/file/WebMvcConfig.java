@@ -12,6 +12,10 @@ public class WebMvcConfig implements WebMvcConfigurer {
     String loadSrc;
     @Value("${env.imageUploadSrc}")
     String uploadSrc;
+    @Value("${env.imageLoadBufferSrc}")
+    String loadBufferSrc;
+    @Value("${env.imageUploadBufferSrc}")
+    String uploadBufferSrc;
     /**
      * Add handlers to serve static resources such as images, js, and, css
      * files from specific locations under web application root, the classpath,
@@ -22,8 +26,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
      */
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler(loadSrc + "/**")
-                .addResourceLocations("file:///" + uploadSrc + "\\");
+        registry.addResourceHandler(loadSrc + "/**").addResourceLocations("file:///" + uploadSrc + "\\");
+        registry.addResourceHandler(loadBufferSrc + "/**").addResourceLocations("file:///" + uploadBufferSrc + "\\");
     }
 
 }

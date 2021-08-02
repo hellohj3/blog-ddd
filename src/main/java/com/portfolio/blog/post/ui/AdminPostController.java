@@ -18,17 +18,16 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 @Controller
 @RequiredArgsConstructor
 public class AdminPostController {
 
+    @Value("${env.imageLoadBufferSrc}")
+    String loadBufferPath;
     @Value("${env.imageLoadSrc}")
-    String imageLoadSrc;
+    String loadPath;
     private final PostService postService;
     private final AttachmentsService attachmentsService;
 
@@ -36,8 +35,7 @@ public class AdminPostController {
     public String listPost(PostSearchDto postSearchDto, Model model,
                        @PageableDefault(page = 0, size = 5, sort = "CREATED_DATE", direction = Sort.Direction.DESC) Pageable pageable) {
         Page<PostDto> posts = postService.findPosts(postSearchDto, pageable);
-        CriteriaDto pagination = (posts.isEmpty()) ? CriteriaDto.builder().build()
-                : CriteriaDto.builder().page(posts).build();
+        CriteriaDto pagination = CriteriaDto.builder().page(posts).build();
 
         model.addAttribute("list", posts.getContent());
         model.addAttribute("pagination", pagination);
@@ -58,20 +56,42 @@ public class AdminPostController {
 
     @PostMapping("/admin/post")
     public String createPost(Model model, @Valid PostDto postDto,
-                             @RequestParam("attachmentsIds") String attachmentsIds) throws Exception {
-        String[] splitAttachmentsId = attachmentsIds.split(",");
-        LinkedList<AttachmentsDto> attachmentsDtos = new LinkedList<>();
-
-        for (String attachmentsId : splitAttachmentsId) {
-            attachmentsDtos.add(AttachmentsDto.builder()
-                    .id(Long.parseLong(attachmentsId))
-                    .build());
-        }
+                             @RequestParam("attachmentsSrcs") String attachmentsSrcs) throws Exception {
+        List<String> names = Arrays.asList(attachmentsSrcs.replace(loadBufferPath + "/", "").split(","));
+        List<AttachmentsDto> attachmentsDtos = attachmentsService.findAttachmentsByNames(names);
         postDto.setAttachmentsList(attachmentsDtos);
-
-        Long savePostId = postService.savePost(postDto);
+        postDto.setContents(postDto.getContents().replace(loadBufferPath, loadPath));
+        postService.savePost(postDto);
 
         return "redirect:/admin/posts";
+    }
+
+    @GetMapping("/admin/post/{id}")
+    public String updateFormPost(@PathVariable("id") Long id, Model model) {
+        model.addAttribute("post", postService.findPost(id));
+
+        return "admin/post/update";
+    }
+
+    @PutMapping("/admin/post/{id}")
+    @ResponseBody
+    public String updatePost(@PathVariable("id") Long id, @Valid PostDto postDto,
+                             @RequestParam("attachmentsSrcs") String attachmentsSrcs) throws Exception {
+        List<String> names = Arrays.asList(attachmentsSrcs.replace(loadPath + "/", "").split(","));
+        List<AttachmentsDto> findDtos = attachmentsService.findAttachmentsByNames(names);
+        postDto.setAttachmentsList(findDtos);
+        postDto.setId(id);
+        postService.updatePost(postDto);
+
+        return "/admin/posts";
+    }
+
+    @DeleteMapping("/admin/post/{id}")
+    @ResponseBody
+    public String deletePost(@PathVariable("id") Long id) throws Exception {
+        String result = postService.deletePost(id);
+
+        return result;
     }
 
     @PostMapping("/admin/attachments")
@@ -85,7 +105,7 @@ public class AdminPostController {
             String fileName = names.next();
             MultipartFile file = request.getFile(fileName);
             AttachmentsDto attachmentsDto = upload(file);
-            attachmentsDto.setPath(imageLoadSrc);
+            attachmentsDto.setPath(loadBufferPath);     // 에디터에 임시로드 되어야 하므로 버퍼 경로 사용
             attachmentList.add(attachmentsDto);
         }
         

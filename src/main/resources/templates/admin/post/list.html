@@ -32,7 +32,7 @@
                                 <th:block th:unless="${list.isEmpty()}">
                                     <tr th:each="post: ${list}">
                                         <td>No</td>
-                                        <td th:text="${post.title}"></td>
+                                        <td><a th:text="${post.title}" th:href="@{/admin/post/{id} (id=${post.id})}"></a></td>
                                         <td th:text="${post.author}"></td>
                                         <td>작성일</td>
                                         <td>조회수</td>
@@ -40,7 +40,7 @@
                                 </th:block>
                                 </tbody>
                             </table>
-                            <div class="pagination-container" th:if="${not #lists.isEmpty(pagination)}">
+                            <div class="pagination-container" th:if="${pagination.totalPage ne 0}">
                                 <div class="pagination p1" style="display: block;">
                                     <a th:classappend="${pagination.first eq true} ? 'disabled'" th:href="${pagination.first eq true} ? '#' : @{/admin/posts(page=${#numbers.formatDecimal(pagination.startPage - pagination.pageSize, 0, -1)})}">&lt;</a>
                                     <th:block th:each="page: ${#numbers.sequence(pagination.startPage, pagination.endPage)}">

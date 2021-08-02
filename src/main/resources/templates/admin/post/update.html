@@ -19,10 +19,10 @@
             <div class="col-md-10">
                 <div class="card card-user">
                     <div class="card-header">
-                        <h5 class="card-title">포스트 등록</h5>
+                        <h5 class="card-title">포스트 수정</h5>
                     </div>
                     <div class="card-body">
-                        <form th:action="@{/admin/post}" th:object="${post}" id="postForm" method="post">
+                        <form th:action="@{/admin/post/{id} (id=${post.id})}" th:object="${post}" id="postForm">
                             <input type="hidden" id="attachmentsSrcs" name="attachmentsSrcs" value="">
                             <div class="row">
                                 <div class="col-md-12">
@@ -41,7 +41,8 @@
                             </div>
                             <div class="row">
                                 <div class="update ml-auto mr-auto">
-                                    <button type="button" class="btn btn-primary btn-round" onclick="validationForm();">Registration</button>
+                                    <button type="button" class="btn btn-primary btn-round" th:onclick="'validationForm()'">Modify</button>
+                                    <button type="button" class="btn btn-danger btn-round" th:onclick="'deletePost()'">Delete</button>
                                 </div>
                             </div>
                         </form>
@@ -54,11 +55,38 @@
     <script>
         function validationForm() {
             var src = "";
+            var url = $("#postForm").attr("action");
+
             $("#postForm img").each(function (index, item) {
                  src += ($(item).attr("src") + ",");
             });
             $("#attachmentsSrcs").val(src.substring(0, src.length-1));
-            $("#postForm").submit();
+
+            $.ajax({
+                type: "put",
+                url: url,
+                data: $("#postForm").serialize(),
+                success: function (data) {
+                    alert("수정 되었습니다.");
+                    location.href = data;
+                }
+            });
+        }
+
+        function deletePost() {
+            if (confirm("해당 포스트를 삭제 하시겠습니까?")) {
+                var url = $("#postForm").attr("action");
+
+                $.ajax({
+                    type: "delete",
+                    url: url,
+                    data: $("#postForm").serialize(),
+                    success: function (data) {
+                        alert((data == "success") ? "삭제 되었습니다." : "삭제에 실패하였습니다.");
+                        location.href = "/admin/posts";
+                    }
+                });
+            }
         }
     </script>
 </th:block>

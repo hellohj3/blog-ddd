@@ -3,7 +3,7 @@ package com.portfolio.blog.post.ui.dto;
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.*;
 
-import java.util.LinkedList;
+import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
@@ -14,7 +14,7 @@ public class PostDto {
     private String author;
     private String title;
     private String contents;
-    private LinkedList<AttachmentsDto> attachmentsList;
+    private List<AttachmentsDto> attachmentsList;
 
     @Builder
     @QueryProjection

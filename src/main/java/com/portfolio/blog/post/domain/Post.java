@@ -2,6 +2,7 @@ package com.portfolio.blog.post.domain;
 
 import com.portfolio.blog.account.domain.Account;
 import com.portfolio.blog.common.domain.BaseTimeEntity;
+import com.portfolio.blog.post.ui.dto.AttachmentsDto;
 import com.portfolio.blog.post.ui.dto.PostDto;
 import lombok.*;
 import org.springframework.util.StringUtils;
@@ -10,6 +11,7 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -27,7 +29,7 @@ public class Post extends BaseTimeEntity {
     @JoinColumn(name = "account_id")
     private Account account;
 
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "post")
     private List<Attachments> attachmentsList = new ArrayList<>();
 
     @Column(nullable = false)
@@ -40,7 +42,7 @@ public class Post extends BaseTimeEntity {
     private Integer viewCount;
 
     // 포스트 생성 메소드
-    public static Post createPost(PostDto postDto, Account account, LinkedList<Attachments> attachmentsList) {
+    public static Post createPost(PostDto postDto, Account account, List<Attachments> attachmentsList) {
         Post post = Post.builder()
                 .title(postDto.getTitle())
                 .contents(postDto.getContents())
@@ -57,11 +59,28 @@ public class Post extends BaseTimeEntity {
     }
 
     // 포스트 수정 메소드
-    public void updatePost(PostDto postDto) {
-
+    public List<String> updatePost(PostDto postDto) {
+        List<String> deleteAttachmentsIds = new ArrayList<>();
         this.title = StringUtils.hasText(postDto.getTitle()) ? postDto.getTitle() : this.title;
         this.contents = StringUtils.hasText(postDto.getContents()) ? postDto.getContents() : this.contents;
+
+        if (postDto.getAttachmentsList() != null) {
+            List<String> names = postDto.getAttachmentsList().stream()
+                    .map(AttachmentsDto::getName).collect(Collectors.toList());
+
+            for (int i=0; i<this.attachmentsList.size(); i++) {
+                if (!names.contains(attachmentsList.get(i).getName())) {
+                    deleteAttachmentsIds.add(attachmentsList.get(i).getName());
+                    this.removeAttachments(attachmentsList.get(i));
+                }
+            }
+
+            this.attachmentsList = postDto.getAttachmentsList().stream()
+                    .map(AttachmentsDto::parseEntity).collect(Collectors.toList());
+        }
         this.updateDate();
+
+        return deleteAttachmentsIds;
     }
 
     // 뷰카운트 증가 메소드

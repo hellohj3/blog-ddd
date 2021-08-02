@@ -8,22 +8,35 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 
 @Component
 public class AttachmentsHandler {
+    @Value("${env.imageUploadBufferSrc}")
+    String uploadBufferPath;
+    @Value("${env.imageLoadSrc}")
+    String loadPath;
     @Value("${env.imageUploadSrc}")
-    String path;
+    String upLoadPath;
     Attachments attachments = Attachments.builder().build();
 
     public Attachments parseAttachments(MultipartFile multipartFile) throws Exception {
         if (!multipartFile.isEmpty()) {
-            File file  = new File(path);
+            File fileUploadBufferPath = new File(uploadBufferPath);
+            File fileUploadPath = new File(upLoadPath);
 
             // 디렉토리 없을시 생성
-            if (!file.exists()) {
-                boolean wasSuccessful = file.mkdirs();
+            if (!fileUploadBufferPath.exists()) {
+                boolean wasSuccessful = fileUploadBufferPath.mkdirs();
+
+                if (!wasSuccessful)
+                    System.out.println("file : was not successful");
+            }
+            if (!fileUploadPath.exists()) {
+                boolean wasSuccessful = fileUploadPath.mkdirs();
 
                 if (!wasSuccessful)
                     System.out.println("file : was not successful");
@@ -47,7 +60,7 @@ public class AttachmentsHandler {
 
             // 파일 저장
             String newFileName = String.valueOf(System.currentTimeMillis()) + originExtension;
-            file = new File(path + "\\" + newFileName);
+            File file = new File(uploadBufferPath + "\\" + newFileName);
             multipartFile.transferTo(file);
 
             // 파일 권한 설정
@@ -56,7 +69,7 @@ public class AttachmentsHandler {
 
             // 첨부파일 객체 생성
             attachments = Attachments.builder()
-                    .path(path)
+                    .path(loadPath)
                     .origin(multipartFile.getOriginalFilename())
                     .name(newFileName)
                     .size(multipartFile.getSize())
@@ -65,16 +78,36 @@ public class AttachmentsHandler {
         return attachments;
     }
 
-    public void deleteFile(String fileName) throws Exception {
-        if (!fileName.isEmpty()) {
-            File file = new File(path + "\\" + fileName);
+    // 실제 사용중인 디렉토리에서 파일 일괄 삭제
+    public void deleteRealFileBulk(List<String> fileNames) throws Exception {
+        if (fileNames.size() > 0) {
+            for (String fileName : fileNames) {
+                deleteRealFileSingle(fileName);
+            }
+        }
+    }
 
-            if (file.exists()) {
-                if (file.delete()) {
-                    System.out.println("file : was deleted");
-                } else {
-                    System.out.println("file : was not deleted");
-                }
+    // 실제 사용중인 디렉토리에서 파일 단건 삭제
+    public void deleteRealFileSingle(String fileName) throws Exception {
+        File file = new File(upLoadPath + "\\" + fileName);
+
+        if (file.exists()) {
+            if (file.delete()) {
+                System.out.println("file : was deleted");
+            } else {
+                System.out.println("file : was not deleted");
+            }
+        }
+    }
+
+    // 버퍼 디렉토리에서 실제 사용하는 디렉토리로 파일 복사
+    public void copyFile(List<String> fileNames) throws Exception {
+        if (fileNames.size() > 0) {
+            for (String fileName : fileNames) {
+                File oldFile = new File(uploadBufferPath + "\\" + fileName);
+                File newFile = new File(upLoadPath + "\\" + fileName);
+
+                Files.copy(oldFile.toPath(), newFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
             }
         }
     }

@@ -1,5 +1,6 @@
 package com.portfolio.blog.post.ui.dto;
 
+import com.portfolio.blog.post.domain.Attachments;
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.*;
 
@@ -23,5 +24,15 @@ public class AttachmentsDto {
         this.name = name;
         this.extension = extension;
         this.size = size;
+    }
+
+    public Attachments parseEntity() {
+        return Attachments.builder()
+                .id(this.id)
+                .path(this.path)
+                .origin(this.origin)
+                .name(this.name)
+                .size(this.size)
+                .build();
     }
 }

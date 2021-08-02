@@ -41,16 +41,8 @@ class UploadAdapter {
             // If the upload is successful, resolve the upload promise with an object containing
             // at least the "default" URL, pointing to the image on the server.
             resolve({
-                default: response[0].path + response[0].name,
+                default: response[0].path + "/" + response[0].name,
             });
-
-            var valueBuffer = document.getElementById("attachmentsIds").value;
-            valueBuffer += (valueBuffer.length == 0) ? "" : ",";
-
-            for (var i=0; i<response.length; i++) {
-                valueBuffer += (response[i].id + ",");
-            }
-            document.getElementById("attachmentsIds").value = valueBuffer.substring(0, valueBuffer.length - 1);
         });
         if (xhr.upload) {
             xhr.upload.addEventListener("progress", (evt) => {
