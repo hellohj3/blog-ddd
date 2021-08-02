@@ -1,6 +1,7 @@
 package com.portfolio.blog.account.domain;
 
 import com.portfolio.blog.post.domain.Post;
+import com.portfolio.blog.post.domain.Reple;
 import lombok.*;
 
 import javax.persistence.*;
@@ -35,5 +36,8 @@ public class Account {
 
     @OneToMany(mappedBy = "account")
     private List<Post> posts = new ArrayList<>();
+
+    @OneToMany(mappedBy = "account")
+    private List<Reple> reples = new ArrayList<>();
 
 }

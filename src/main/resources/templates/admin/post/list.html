@@ -9,7 +9,7 @@
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header">
-                        <h4 class="card-title"> Simple Table</h4>
+                        <h4 class="card-title">포스트 리스트</h4>
                     </div>
                     <div class="card-header col-md-12 text-right position-absolute">
                         <button type="button" class="btn btn-primary btn-round"
@@ -19,7 +19,6 @@
                         <div class="table-responsive">
                             <table class="table">
                                 <thead class=" text-primary">
-                                <th>No.</th>
                                 <th>제목</th>
                                 <th>작성자</th>
                                 <th>작성일</th>
@@ -29,13 +28,12 @@
                                 <tr th:if="${list.isEmpty()}">
                                     <td colspan="5" style="text-align: center">포스팅 기록이 없습니다.</td>
                                 </tr>
-                                <th:block th:unless="${list.isEmpty()}">
+                                <th:block th:unless="${list.isEmpty()}" >
                                     <tr th:each="post: ${list}">
-                                        <td>No</td>
                                         <td><a th:text="${post.title}" th:href="@{/admin/post/{id} (id=${post.id})}"></a></td>
                                         <td th:text="${post.author}"></td>
-                                        <td>작성일</td>
-                                        <td>조회수</td>
+                                        <td th:text="${#temporals.format(post.createdDate,'yyyy-MM-dd HH:mm:ss')}"></td>
+                                        <td th:text="${post.viewCount}"></td>
                                     </tr>
                                 </th:block>
                                 </tbody>

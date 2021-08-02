@@ -32,10 +32,13 @@ public class Post extends BaseTimeEntity {
     @OneToMany(mappedBy = "post")
     private List<Attachments> attachmentsList = new ArrayList<>();
 
+    @OneToMany(mappedBy = "post")
+    private List<Reple> reples = new ArrayList<>();
+
     @Column(nullable = false)
     private String title;
 
-    @Column(nullable = false)
+    @Column(columnDefinition = "TEXT", nullable = false)
     private String contents;
 
     @Column(nullable = false)
@@ -103,10 +106,12 @@ public class Post extends BaseTimeEntity {
     // PostResponseDto 로 변환
     public PostDto parseDto() {
         return PostDto.builder()
-                .id(this.getId())
+                .id(this.id)
                 .author(this.account.getAccountId())
-                .title(this.getTitle())
-                .contents(this.getContents())
+                .title(this.title)
+                .contents(this.contents)
+                .viewCount(this.viewCount)
+                .createdDate(this.getCreatedDate())
                 .build();
     }
 }

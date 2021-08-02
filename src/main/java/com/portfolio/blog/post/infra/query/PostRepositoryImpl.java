@@ -47,7 +47,9 @@ public class PostRepositoryImpl implements PostRepositoryQuery {
                         post.id,
                         post.account.accountId,
                         post.title,
-                        post.contents
+                        post.contents,
+                        post.viewCount,
+                        post.createdDate
                 ))
                 .from(post)
                 .limit(postSearchDto.getLimit())
@@ -63,7 +65,9 @@ public class PostRepositoryImpl implements PostRepositoryQuery {
                         post.id,
                         post.account.accountId,
                         post.title,
-                        post.contents
+                        post.contents,
+                        post.viewCount,
+                        post.createdDate
                 ))
                 .from(post)
                 .leftJoin(post.account, account)
@@ -88,7 +92,9 @@ public class PostRepositoryImpl implements PostRepositoryQuery {
                         post.id,
                         post.account.accountId,
                         post.title,
-                        post.contents
+                        post.contents,
+                        post.viewCount,
+                        post.createdDate
                 ))
                 .from(post)
                 .leftJoin(post.account, account)
