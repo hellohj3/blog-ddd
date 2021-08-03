@@ -4,32 +4,33 @@ import com.querydsl.core.annotations.QueryProjection;
 import lombok.*;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Setter
-public class PostDto {
+public class RepleDto {
 
     private Long id;
+    private Long postId;
+    private Long parentId;
     private String author;
-    private String title;
     private String contents;
-    private List<AttachmentsDto> attachmentsList;
-    private Integer viewCount;
+    private String postTitle;
     private LocalDateTime createdDate;
     private LocalDateTime modifiedDate;
 
     @Builder
     @QueryProjection
-    public PostDto(Long id, String author, String title, String contents,
-                   Integer viewCount, LocalDateTime createdDate, LocalDateTime modifiedDate) {
+    public RepleDto(Long id, Long postId, Long parentId, String author, String contents, String postTitle,
+                    LocalDateTime createdDate, LocalDateTime modifiedDate) {
         this.id = id;
+        this.postId = postId;
+        this.parentId = parentId;
         this.author = author;
-        this.title = title;
         this.contents = contents;
-        this.viewCount = viewCount;
+        this.postTitle = postTitle;
         this.createdDate = createdDate;
         this.modifiedDate = modifiedDate;
     }
+
 }

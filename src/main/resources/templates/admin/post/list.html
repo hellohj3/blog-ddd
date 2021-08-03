@@ -18,11 +18,11 @@
                     <div class="card-body">
                         <div class="table-responsive">
                             <table class="table">
-                                <thead class=" text-primary">
-                                <th>제목</th>
-                                <th>작성자</th>
-                                <th>작성일</th>
-                                <th>조회수</th>
+                                <thead class="text-primary col-md-12">
+                                <th class="col-md-8">제목</th>
+                                <th class="col-md-1 text-center">작성자</th>
+                                <th class="col-md-2 text-center">작성일</th>
+                                <th class="col-md-1 text-center">조회수</th>
                                 </thead>
                                 <tbody>
                                 <tr th:if="${list.isEmpty()}">
@@ -31,9 +31,9 @@
                                 <th:block th:unless="${list.isEmpty()}" >
                                     <tr th:each="post: ${list}">
                                         <td><a th:text="${post.title}" th:href="@{/admin/post/{id} (id=${post.id})}"></a></td>
-                                        <td th:text="${post.author}"></td>
-                                        <td th:text="${#temporals.format(post.createdDate,'yyyy-MM-dd HH:mm:ss')}"></td>
-                                        <td th:text="${post.viewCount}"></td>
+                                        <td class=" text-center" th:text="${post.author}"></td>
+                                        <td class=" text-center" th:text="${#temporals.format(post.createdDate,'yyyy-MM-dd HH:mm:ss')}"></td>
+                                        <td class=" text-center" th:text="${post.viewCount}"></td>
                                     </tr>
                                 </th:block>
                                 </tbody>

@@ -39,7 +39,7 @@ public class PostRepositoryImpl implements PostRepositoryQuery {
         this.queryFactory = new JPAQueryFactory(em);
     }
 
-    // 페이징 없는 리스트 조회
+    // 리스트 조회 (검색)
     @Override
     public List<PostDto> search(PostSearchDto postSearchDto) {
         return queryFactory
@@ -49,7 +49,8 @@ public class PostRepositoryImpl implements PostRepositoryQuery {
                         post.title,
                         post.contents,
                         post.viewCount,
-                        post.createdDate
+                        post.createdDate,
+                        post.modifiedDate
                 ))
                 .from(post)
                 .limit(postSearchDto.getLimit())
@@ -57,7 +58,7 @@ public class PostRepositoryImpl implements PostRepositoryQuery {
                 .fetch();
     }
 
-    // 페이징 및 카운트를 동시에 날리는 리스트 조회
+    // 리스트 페이징 (카운트 동시)
     @Override
     public Page<PostDto> searchPaginationSimple(PostSearchDto postSearchDto, Pageable pageable) {
         QueryResults<PostDto> results = queryFactory
@@ -67,7 +68,8 @@ public class PostRepositoryImpl implements PostRepositoryQuery {
                         post.title,
                         post.contents,
                         post.viewCount,
-                        post.createdDate
+                        post.createdDate,
+                        post.modifiedDate
                 ))
                 .from(post)
                 .leftJoin(post.account, account)
@@ -78,23 +80,24 @@ public class PostRepositoryImpl implements PostRepositoryQuery {
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetchResults();
-        List<PostDto> content = results.getResults();
+        List<PostDto> contents = results.getResults();
         long total = results.getTotal();
 
-        return new PageImpl<>(content, pageable, total);
+        return new PageImpl<>(contents, pageable, total);
     }
 
-    // 페이징 및 카운트를 별도로 날리는 리스트 조회
+    // 리스트 페이징 (카운트 별도)
     @Override
     public Page<PostDto> searchPaginationComplex(PostSearchDto postSearchDto, Pageable pageable) {
-        List<PostDto> content = queryFactory
+        List<PostDto> contents = queryFactory
                 .select(new QPostDto(
                         post.id,
                         post.account.accountId,
                         post.title,
                         post.contents,
                         post.viewCount,
-                        post.createdDate
+                        post.createdDate,
+                        post.modifiedDate
                 ))
                 .from(post)
                 .leftJoin(post.account, account)
@@ -113,9 +116,10 @@ public class PostRepositoryImpl implements PostRepositoryQuery {
                         titleContains(postSearchDto.getTitle()),
                         authorEq(postSearchDto.getAuthor()));
 
-        return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchCount);
+        return PageableExecutionUtils.getPage(contents, pageable, countQuery::fetchCount);
     }
 
+    // 단건조회
     @Override
     public PostDto findByIdToDto(Long id) {
         Post post = queryFactory
@@ -134,17 +138,17 @@ public class PostRepositoryImpl implements PostRepositoryQuery {
         return postDto;
     }
 
-    // 포스트 제목 검색 동적 쿼리
+    // 동적 쿼리 (제목)
     private BooleanExpression titleContains(String title) {
         return hasText(title) ? post.title.contains(title) : null;
     }
 
-    // 작성자 검색 동적 쿼리
+    // 동적 쿼리 (작성자)
     private BooleanExpression authorEq(String author) {
         return hasText(author) ? post.account.accountId.eq(author) : null;
     }
 
-    // 정렬 선택
+    // 동적 쿼리 (정렬)
     private List<OrderSpecifier> sortingType(Pageable pageable) {
         List<OrderSpecifier> orders = new ArrayList<>();
 
@@ -166,6 +170,7 @@ public class PostRepositoryImpl implements PostRepositoryQuery {
         return orders;
     }
 
+    // 정렬 컬럼 선택
     private OrderSpecifier<?> getSortedColumn(Order order, Path<?> parent, String fieldName) {
         Path<Object> fieldPath = Expressions.path(Object.class, parent, fieldName);
         return new OrderSpecifier(order, fieldPath);

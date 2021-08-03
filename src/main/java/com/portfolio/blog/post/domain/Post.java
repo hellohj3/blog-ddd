@@ -44,9 +44,10 @@ public class Post extends BaseTimeEntity {
     @Column(nullable = false)
     private Integer viewCount;
 
-    // 포스트 생성 메소드
-    public static Post createPost(PostDto postDto, Account account, List<Attachments> attachmentsList) {
+    // Dto to Entity
+    public static Post createEntity(PostDto postDto, Account account, List<Attachments> attachmentsList) {
         Post post = Post.builder()
+                .id(postDto.getId() != null ? postDto.getId() : null)
                 .title(postDto.getTitle())
                 .contents(postDto.getContents())
                 .account(account)
@@ -79,7 +80,7 @@ public class Post extends BaseTimeEntity {
             }
 
             this.attachmentsList = postDto.getAttachmentsList().stream()
-                    .map(AttachmentsDto::parseEntity).collect(Collectors.toList());
+                    .map(Attachments::createEntity).collect(Collectors.toList());
         }
         this.updateDate();
 
@@ -95,6 +96,12 @@ public class Post extends BaseTimeEntity {
     public void addAttachments(Attachments attachments) {
         this.attachmentsList.add(attachments);
         attachments.connectPost(this);
+    }
+
+    // 댓글 추가 메소드
+    public void addReple(Reple reple) {
+        this.reples.add(reple);
+        reple.connectPost(this);
     }
 
     // 첨부파일 삭제 메소드

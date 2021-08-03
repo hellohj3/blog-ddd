@@ -9,15 +9,15 @@ import lombok.*;
 public class PostSearchDto {
     private String title;
     private String author;
-    private String regDateDesc;
+    private String createdDateDesc;
     private Integer limit;
 
     @Builder
     @QueryProjection
-    public PostSearchDto(String title, String author, String regDateDesc, Integer limit) {
+    public PostSearchDto(String title, String author, String createdDateDesc, Integer limit) {
         this.title = title;
         this.author = author;
-        this.regDateDesc = regDateDesc;
+        this.createdDateDesc = createdDateDesc;
         this.limit = limit;
     }
 }

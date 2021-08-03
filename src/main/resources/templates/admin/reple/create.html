@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<th:block th:fragment="create">
+    <div class="modal fade" id="create" role="dialog" aria-labelledby="introHeader" aria-hidden="true" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body card card-user" style="margin-bottom: 0;">
+                    <div class="card-header">
+                        <h5 class="card-title">리플 등록</h5>
+                    </div>
+                    <div class="card-body">
+                        <form th:action="@{/admin/reple}" th:object="${reple}" id="repleForm" method="post">
+                            <input type="hidden" th:field="*{postId}">
+                            <input type="hidden" th:field="*{parentId}">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label th:for="contents">내용</label>
+                                        <textarea th:field="*{contents}" class="form-control"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="update ml-auto mr-auto">
+                                    <button type="button" class="btn btn-primary btn-round" onclick="validationForm();">Registration</button>
+                                    <button type="button" class="btn btn-dark btn-round" data-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function validationForm() {
+        }
+    </script>
+</th:block>

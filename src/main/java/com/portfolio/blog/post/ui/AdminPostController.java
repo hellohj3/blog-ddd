@@ -31,6 +31,7 @@ public class AdminPostController {
     private final PostService postService;
     private final AttachmentsService attachmentsService;
 
+    // 리스트
     @GetMapping("/admin/posts")
     public String listPost(PostSearchDto postSearchDto, Model model,
                        @PageableDefault(page = 0, size = 5, sort = "CREATED_DATE", direction = Sort.Direction.DESC) Pageable pageable) {
@@ -43,6 +44,7 @@ public class AdminPostController {
         return "admin/post/list";
     }
 
+    // 등록 폼
     @GetMapping("/admin/post")
     public String formPost(Model model) {
         model.addAttribute("post"
@@ -54,6 +56,7 @@ public class AdminPostController {
         return "admin/post/create";
     }
 
+    // 등록
     @PostMapping("/admin/post")
     public String createPost(Model model, @Valid PostDto postDto,
                              @RequestParam("attachmentsSrcs") String attachmentsSrcs) throws Exception {
@@ -66,6 +69,7 @@ public class AdminPostController {
         return "redirect:/admin/posts";
     }
 
+    // 수정 폼
     @GetMapping("/admin/post/{id}")
     public String updateFormPost(@PathVariable("id") Long id, Model model) {
         model.addAttribute("post", postService.findPost(id));
@@ -73,6 +77,7 @@ public class AdminPostController {
         return "admin/post/update";
     }
 
+    // 수정
     @PutMapping("/admin/post/{id}")
     @ResponseBody
     public String updatePost(@PathVariable("id") Long id, @Valid PostDto postDto,
@@ -86,6 +91,7 @@ public class AdminPostController {
         return "/admin/posts";
     }
 
+    // 삭제
     @DeleteMapping("/admin/post/{id}")
     @ResponseBody
     public String deletePost(@PathVariable("id") Long id) throws Exception {
@@ -94,6 +100,7 @@ public class AdminPostController {
         return result;
     }
 
+    // 첨부파일 등록
     @PostMapping("/admin/attachments")
     @ResponseBody
     public List<AttachmentsDto> createAttachments(
@@ -112,6 +119,7 @@ public class AdminPostController {
         return attachmentList;
     }
 
+    // 첨부파일 업로드 메소드
     private AttachmentsDto upload(MultipartFile multipartFile) throws Exception {
         String extension = "";
 
@@ -124,4 +132,5 @@ public class AdminPostController {
 
         return attachmentsService.saveAttachments(multipartFile);
     }
+
 }

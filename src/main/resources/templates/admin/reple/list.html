@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="admin/layouts/layout-ver-1">
+
+<th:block layout:fragment="contents">
+    <div class="content">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">댓글 리스트</h4>
+                    </div>
+                    <div class="card-header col-md-12 text-right position-absolute">
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead class="text-primary col-md-12">
+                                <th class="col-md-4">내용</th>
+                                <th class="col-md-3">관련포스트</th>
+                                <th class="col-md-1 text-center">작성자</th>
+                                <th class="col-md-2 text-center">작성일</th>
+                                <th class="col-md-2 text-center">기능</th>
+                                </thead>
+                                <tbody>
+                                <tr th:if="${list.isEmpty()}">
+                                    <td colspan="5" style="text-align: center">댓글 기록이 없습니다.</td>
+                                </tr>
+                                <th:block th:unless="${list.isEmpty()}" >
+                                    <tr th:each="reple: ${list}">
+                                        <td th:text="${reple.contents}"></td>
+                                        <td><a th:text="${reple.postTitle}" th:href="@{/admin/post/{id} (id=${reple.postId})}"></a></td>
+                                        <td class=" text-center" th:text="${reple.author}"></td>
+                                        <td class=" text-center" th:text="${#temporals.format(reple.createdDate,'yyyy-MM-dd HH:mm:ss')}"></td>
+                                        <td class=" text-center">
+                                            <button type="button" class="btn btn-primary btn-round"
+                                                    data-toggle="modal" data-target="#create" th:onclick="'setPostId('+${reple.postId}+','+${reple.id}+')'">답글</button>
+                                            <button type="button" class="btn btn-danger btn-round" th:onclick="'deleteReple('+${reple.id}+')'">삭제</button>
+                                        </td>
+                                    </tr>
+                                </th:block>
+                                </tbody>
+                            </table>
+                            <div class="pagination-container" th:if="${pagination.totalPage ne 0}">
+                                <div class="pagination p1" style="display: block;">
+                                    <a th:classappend="${pagination.first eq true} ? 'disabled'" th:href="${pagination.first eq true} ? '#' : @{/admin/reples(page=${#numbers.formatDecimal(pagination.startPage - pagination.pageSize, 0, -1)})}">&lt;</a>
+                                    <th:block th:each="page: ${#numbers.sequence(pagination.startPage, pagination.endPage)}">
+                                        <a th:classappend="${page == pagination.currentPage + 1} ? 'is-active'" th:text="${page}" th:href="@{/admin/reples(page=1)}"></a>
+                                    </th:block>
+                                    <a th:classappend="${pagination.last eq true} ? 'disabled'" th:href="${pagination.last} ? '#' : @{/admin/reples(page=${#numbers.formatDecimal(pagination.startPage - pagination.pageSize, 0, -1)})}">></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <th:block th:replace="admin/reple/create :: create"></th:block>
+
+        <script>
+            function setPostId(postId, parentId) {
+                $("#postId").val(postId);
+                $("#parentId").val(parentId);
+            }
+
+            function deleteReple(id) {
+                if (confirm("해당 댓글을 삭제 하시겠습니까?")) {
+                    var url = "/admin/reple/"+id;
+
+                    $.ajax({
+                        type: "delete",
+                        url: url,
+                        success: function (data) {
+                            alert((data == "success") ? "삭제 되었습니다." : "삭제에 실패하였습니다.");
+                            location.href = "/admin/reples";
+                        }
+                    });
+                }
+            }
+        </script>
+    </div>
+</th:block>

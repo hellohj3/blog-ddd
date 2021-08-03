@@ -103,7 +103,7 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
 
     */
 /**
-     * Role 이 존재하지 않으면 생성하는 메서드
+     * Role 이 존재하지 않으면 생성하는 메소드
      * @param roleName
      * @param roleDesc
      * @return Role
@@ -121,7 +121,7 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
 
     */
 /**
-     * Resource / RoleResource 가 존재하지 않으면 생성하는 메서드
+     * Resource / RoleResource 가 존재하지 않으면 생성하는 메소드
      * @param resourceName
      * @param roleSet
      * @param resourceType
@@ -145,7 +145,7 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
 
     */
 /**
-     * Account 가 존재하지 않으면 생성하는 메서드
+     * Account 가 존재하지 않으면 생성하는 메소드
      * @param accountId
      * @param password
      * @param name
@@ -168,7 +168,7 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
 
     */
 /**
-     * 권한 계층 생성하는 메서드
+     * 권한 계층 생성하는 메소드
      * @param childRole
      * @param parentRole
      *//*

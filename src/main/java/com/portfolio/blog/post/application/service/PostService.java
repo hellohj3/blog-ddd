@@ -18,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -33,9 +32,19 @@ public class PostService {
     private final AttachmentsHandler attachmentsHandler;
     private final AttachmentsRepository attachmentsRepository;
 
+    // 포스트 리스트 (페이징)
+    public Page<PostDto> findPosts(PostSearchDto postSearchDto, Pageable pageable) {
+        return postRepository.searchPaginationSimple(postSearchDto, pageable);
+    }
+
+    // 포스트 단건조회
+    public PostDto findPost(Long id) {
+        return postRepository.findByIdToDto(id);
+    }
+
     // 포스트 저장
     @Transactional
-    public Long savePost(PostDto postDto) throws Exception {
+    public void savePost(PostDto postDto) throws Exception {
         Account account =
                 accountRepository.findById(SecurityContextHolder.getContext().getAuthentication().getName())
                         .orElseThrow(() -> new InternalAuthenticationServiceException("계정정보 없음"));
@@ -48,9 +57,7 @@ public class PostService {
             attachmentsList.add(findByAttachments);
         }
         attachmentsHandler.copyFile(attachmentsDtos.stream().map(AttachmentsDto::getName).collect(Collectors.toList()));
-        Post savePost = postRepository.save(Post.createPost(postDto, account, attachmentsList));
-
-        return (ObjectUtils.isEmpty(savePost)) ? 0L : savePost.getId();
+        postRepository.save(Post.createEntity(postDto, account, attachmentsList));
     }
 
     // 포스트 수정
@@ -63,16 +70,6 @@ public class PostService {
             List<String> deleteAttachmentsIds = findPost.updatePost(postDto);
             attachmentsHandler.deleteRealFileBulk(deleteAttachmentsIds);
         }
-    }
-
-    // 포스트 단건조회
-    public PostDto findPost(Long id) {
-        return postRepository.findByIdToDto(id);
-    }
-
-    // 포스트 리스트 - 페이징
-    public Page<PostDto> findPosts(PostSearchDto postSearchDto, Pageable pageable) {
-        return postRepository.searchPaginationSimple(postSearchDto, pageable);
     }
 
     // 포스트 삭제
@@ -98,4 +95,5 @@ public class PostService {
             return "fail";
         }
     }
+
 }

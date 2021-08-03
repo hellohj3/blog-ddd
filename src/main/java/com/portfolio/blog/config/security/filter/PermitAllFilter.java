@@ -44,7 +44,7 @@ public class PermitAllFilter extends FilterSecurityInterceptor {
             }
         }
 
-        // 인가처리 필요없는 (static, templates 모두 포함)자원이면 부모쪽 메서드를 호출하지 않는다.
+        // 인가처리 필요없는 (static, templates 모두 포함)자원이면 부모쪽 메소드를 호출하지 않는다.
         return permitAll ? null : super.beforeInvocation(object);
     }
 

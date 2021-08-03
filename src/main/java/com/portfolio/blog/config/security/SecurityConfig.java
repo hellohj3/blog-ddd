@@ -109,14 +109,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     // 권한 계층 보터 생성
     public AccessDecisionVoter<? extends Object> roleVoter() {
-        // 특정 메서드 사용을 위해 RoleHierarchyImpl 타입 사용
+        // 특정 메소드 사용을 위해 RoleHierarchyImpl 타입 사용
         // 이 객체에서 setHierarchy 해서 문자열 세팅해서 넘겨줘야 계층 생성됨
         return new RoleHierarchyVoter(roleHierarchy());
     }
 
     @Bean
     public RoleHierarchyImpl roleHierarchy() {
-        // 특정 메서드 사용을 위해 RoleHierarchyImpl 타입 사용
+        // 특정 메소드 사용을 위해 RoleHierarchyImpl 타입 사용
         return new RoleHierarchyImpl();         // 이 객체에서 setHierarchy 해서 문자열 세팅해서 넘겨줘야함
     }
     // url 기반 구너한요청을 위한 Filter 추가영역 - END

@@ -26,13 +26,4 @@ public class AttachmentsDto {
         this.size = size;
     }
 
-    public Attachments parseEntity() {
-        return Attachments.builder()
-                .id(this.id)
-                .path(this.path)
-                .origin(this.origin)
-                .name(this.name)
-                .size(this.size)
-                .build();
-    }
 }
