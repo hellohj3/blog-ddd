@@ -19,16 +19,6 @@ public class MainController {
 
     private final PostService postService;
 
-    @GetMapping("/")
-    public String main(Model model,
-                       @PageableDefault(page = 0, size = 5, sort = "CREATED_DATE", direction = Sort.Direction.DESC) Pageable pageable) {
-        List<PostDto> posts = postService.findPosts(PostSearchDto.builder().build(), pageable).getContent();
-
-        model.addAttribute("posts", posts);
-
-        return "front/main/list";
-    }
-
     @GetMapping("/admin")
     public String admin() {
         return "redirect:/admin/posts";
