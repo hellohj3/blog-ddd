@@ -26,4 +26,15 @@ public class AttachmentsDto {
         this.size = size;
     }
 
+    // Dto to Entity
+    public Attachments createEntity() {
+        return Attachments.builder()
+                .id(this.id != null ? this.id : null)
+                .path(this.path)
+                .origin(this.origin)
+                .name(this.name)
+                .size(this.size)
+                .build();
+    }
+
 }

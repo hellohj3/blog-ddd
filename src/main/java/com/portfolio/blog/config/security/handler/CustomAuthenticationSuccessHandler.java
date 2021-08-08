@@ -1,6 +1,8 @@
 package com.portfolio.blog.config.security.handler;
 
+import com.portfolio.blog.account.domain.RoleEnum;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.DefaultRedirectStrategy;
 import org.springframework.security.web.RedirectStrategy;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
@@ -13,6 +15,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Collection;
 
 @Component
 public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
@@ -31,8 +34,12 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
         if (savedRequest != null) {
             // 다른자원에서 접근한경우
+            Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
             String targetUrl = savedRequest.getRedirectUrl();
-            redirectStrategy.sendRedirect(request, response, targetUrl);
+
+            for (GrantedAuthority authority : authorities)
+                redirectStrategy.sendRedirect(request, response, (RoleEnum.MEMBER.getKey().equals(authority.getAuthority()))
+                        ? getDefaultTargetUrl() : targetUrl);
         } else {
             // 바로 인증으로 접근한경우
             redirectStrategy.sendRedirect(request, response, getDefaultTargetUrl());

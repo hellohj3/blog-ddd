@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
-      layout:decorator="admin/layouts/layout-ver-1">
+      layout:decorator="admin/layouts/layout-ver-post">
 
 <th:block layout:fragment="contents">
     <div class="content">
@@ -40,11 +40,11 @@
                             </table>
                             <div class="pagination-container" th:if="${pagination.totalPage ne 0}">
                                 <div class="pagination p1" style="display: block;">
-                                    <a th:classappend="${pagination.first eq true} ? 'disabled'" th:href="${pagination.first eq true} ? '#' : @{/admin/posts(page=${#numbers.formatDecimal(pagination.startPage - pagination.pageSize, 0, -1)})}">&lt;</a>
+                                    <a th:style="${pagination.first eq true} ? 'display: none;'" th:href="${pagination.first eq true} ? '#' : @{/admin/posts(page=${pagination.previousPage} - 1)}">&lt;</a>
                                     <th:block th:each="page: ${#numbers.sequence(pagination.startPage, pagination.endPage)}">
-                                        <a th:classappend="${page == pagination.currentPage + 1} ? 'is-active'" th:text="${page}" th:href="@{/admin/posts(page=1)}"></a>
+                                        <a th:classappend="${page == pagination.currentPage + 1} ? 'is-active'" th:text="${page}" th:href="@{/admin/posts(page=${page}-1)}"></a>
                                     </th:block>
-                                    <a th:classappend="${pagination.last eq true} ? 'disabled'" th:href="${pagination.last} ? '#' : @{/admin/posts(page=${#numbers.formatDecimal(pagination.startPage - pagination.pageSize, 0, -1)})}">></a>
+                                    <a th:style="${pagination.last eq true} ? 'display: none;'" th:href="${pagination.last} ? '#' : @{/admin/posts(page=${pagination.nextPage} - 1)}">></a>
                                 </div>
                             </div>
                         </div>

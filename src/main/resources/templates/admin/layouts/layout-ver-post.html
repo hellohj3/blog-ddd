@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+<!-- START: HEADER -->
+<th:block th:replace="admin/fragments/header :: header"></th:block>
+<!-- END: HEADER -->
+
+<body>
+<div class="wrapper">
+    <!-- START: SIDE -->
+    <th:block th:replace="admin/fragments/sidebar :: sidebar"></th:block>
+    <!-- END: SIDE -->
+
+    <div class="main-panel" style="min-height: 100%">
+        <!-- START: NAVI -->
+        <th:block th:replace="admin/fragments/navigation :: navigation"></th:block>
+        <!-- END: NAVI -->
+
+        <!-- START: CONTENTS -->
+        <th:block layout:fragment="contents"></th:block>
+        <!-- END: CONTENTS -->
+
+        <!-- START: FOOTER -->
+        <th:block th:replace="admin/fragments/footer :: footer"></th:block>
+        <!-- END: FOOTER -->
+    </div>
+</div>
+
+<!-- START: SCRIPTS -->
+<th:block th:replace="admin/fragments/scripts :: scripts"></th:block>
+<!-- START: SCRIPTS -->
+
+<script>
+    $(document).ready(function () {
+        $("#sideMenuPost").addClass("active");
+    });
+</script>
+
+</body>
+</html>

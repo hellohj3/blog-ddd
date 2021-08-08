@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <header role="banner" id="fh5co-header" th:fragment="navigation">
     <div class="container">
@@ -13,16 +14,10 @@
                 <div class="col-md-6">
                     <ul class="nav text-center">
                         <li class="active"><a href="index.html"><span>Work</span></a></li>
-                        <li><a href="inside.html">About</a></li>
-                        <li><a href="services.html">Services</a></li>
-                        <li><a href="contact.html">Contact</a></li>
-                    </ul>
-                </div>
-                <div class="col-md-3">
-                    <ul class="social">
-                        <li><a href="#"><i class="icon-twitter"></i></a></li>
-                        <li><a href="#"><i class="icon-dribbble"></i></a></li>
-                        <li><a href="#"><i class="icon-instagram"></i></a></li>
+                        <li><a href="javascript:alert('준비중 입니다.');">About</a></li>
+                        <li><a href="javascript:alert('준비중 입니다.');">History</a></li>
+                        <li sec:authorize="!isAuthenticated()"><a th:href="@{/login}">Sign-in</a></li>
+                        <li sec:authorize="isAuthenticated()"><a th:href="@{/logout}">Sign-out</a></li>
                     </ul>
                 </div>
             </div>

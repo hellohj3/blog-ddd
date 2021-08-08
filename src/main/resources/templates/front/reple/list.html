@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorator="front/layouts/layout-ver-1">
+
+<th:block th:fragment="reples (postId)"
+          th:with="accountId = ${#authentication.isAuthenticated()} ? ${#authentication.getName()} : ''">
+    <style>
+        html {
+            scroll-behavior: smooth;
+        }
+
+        .btn-primary {
+            float: right;
+        }
+
+        #formCont {
+            margin-top: 1.5em;
+        }
+    </style>
+    <section id="product">
+        <div class="container">
+            <div class="row animate-box">
+                <div class="col-md-12 section-heading">
+                    <div class="row">
+                        <div class="col-md-6 col-md-offset-3 subtext" id="reple-list-container"></div>
+                    </div>
+                    <div class="row">
+                        <div class="pagination-container"></div>
+                    </div>
+                    <div sec:authorize="isAuthenticated()" class="row">
+                        <div class="col-md-6 col-md-offset-3 subtext" id="formCont">
+                            <form th:action="@{/reple}" id="repleForm">
+                                <input type="hidden" name="postId" id="postId" th:value="${postId}">
+                                <div class="form-group row">
+                                    <div class="col-md-12 field">
+                                        <label for="repleContents">댓글</label>
+                                        <textarea name="repleContents" id="repleContents" cols="25" rows="5" class="form-control"></textarea>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-md-12 field">
+                                        <button type="button" id="submit" class="btn btn-primary" onclick="validationForm();">Registration</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <th:block th:replace="front/reple/update :: update"></th:block>
+
+    <script>
+        /*<![CDATA[*/
+        var postId = [[${postId}]];
+        var accountId = "[[${accountId}]]";
+        /*]]*/
+        
+        $(document).ready(function () {
+            doPagination("/reples/"+postId);
+        })
+
+        function validationForm() {
+            if (!$("#repleContents").val()) {
+                alert("내용을 입력해주세요");
+                $("#repleContents").focus();
+                return false;
+            }
+
+            var url = "/reple";
+            var type = "post";
+            var data = {
+                "postId" : postId,
+                "repleContents" : $("#repleContents").val()
+            };
+            var json = JSON.stringify(data);
+
+            $.ajax({
+                type: type,
+                url: url,
+                data: json,
+                contentType: "application/json; charset=UTF-8",
+                success: function(data) {
+                    var jsonData = JSON.parse(data);
+                    setList(jsonData.repleList, jsonData.parents);
+                    setPagination(jsonData.pagination);
+                    $("#repleContents").val("");
+                    document.querySelector("#reple-list-container").scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        }
+
+        function setList(list, parents) {
+            var listHtml = "";
+
+            list.forEach(function (element) {
+                listHtml += "<div class='col-md-12 subtext' style='border: 1px solid #ccc; border-radius: 4px; margin-bottom: 0.5em;'>";
+                if (element.author === accountId) {
+                    listHtml += "    <a href='javascript:void(0);' onclick='deleteReple("+element.id+");' style='position: absolute; margin: 1% 0 0 90%; z-index: 9999;'><i class='fas fa-trash'></i></a>";
+                    listHtml += "    <a href='javascript:void(0);' data-toggle='modal' data-target='#update' onclick='formReple("+element.id+", \""+element.repleContents+"\");' style='position: absolute; margin: 1% 0 0 84%; z-index: 9999;'><i class='fas fa-edit'></i></a>";
+                }
+                listHtml += "    <div class='col-md-12 animate-box fadeInUp animated' style='padding-top: 1.5em;'>";
+                listHtml += "        <div class='service'>";
+                listHtml += "            <h3>"+element.author+"</h3>";
+                listHtml += "            <p>"+element.repleContents+"</p>";
+                listHtml += "        </div>";
+                listHtml += "    </div>";
+                listHtml += "</div>";
+
+                parents.forEach(function (parent) {
+                    if (parent.parentId === element.id) {
+                        listHtml += "<div class='col-md-12 subtext' style='border: 1px solid #ccc; border-radius: 4px; margin-bottom: 0.5em;'>";
+                        listHtml += "    <div class='col-md-12 animate-box fadeInUp animated' style='padding-top: 1.5em;'>";
+                        listHtml += "        <div class='service'>";
+                        listHtml += "            <h3><i class='fab fa-replyd' style='color: #52d3aa;'></i> "+parent.author+"</h3>";
+                        listHtml += "            <p>"+parent.repleContents+"</p>";
+                        listHtml += "        </div>";
+                        listHtml += "    </div>";
+                        listHtml += "</div>";
+                    }
+                });
+            });
+
+            $("#reple-list-container").html(listHtml);
+        }
+
+        function setPagination(pagination) {
+            var paginationHtml = "";
+
+            if (pagination.totalPages !== 0) {
+                var firstStyle = (pagination.first) ? "style='display: none;'" : "";
+                var firstHref = (pagination.first) ? "#" : "/reples/"+postId+"?page="+(pagination.previousPage - 1);
+                var lastStyle = (pagination.last) ? "style='display: none;'" : "";
+                var lastHref = (pagination.last) ? "#" : "/reples/"+postId+"?page="+(pagination.nextPage - 1);
+
+                paginationHtml += "<div class='pagination p1' style='display: block;'>";
+                paginationHtml += "    <a "+firstStyle+" href='javascript:void(0)' onclick='doPagination(\""+firstHref+"\")'>&lt;</a>";
+                for (var i=pagination.startPage; i<=pagination.endPage; i++) {
+                    var currentClass = (i === pagination.currentPage + 1) ? "is-active" : "";
+                    paginationHtml += "        <a class='"+currentClass+"' href='javascript:void(0)' onclick='doPagination(\"/reples/"+postId+"?page="+(i-1)+"\")'>"+i+"</a>";
+                }
+                paginationHtml += "    <a "+lastStyle+" href='javascript:void(0)' onclick='doPagination(\""+lastHref+"\")'>></a>";
+                paginationHtml += "</div>";
+            }
+
+            $(".pagination-container").html(paginationHtml);
+        }
+
+        function doPagination(url) {
+            $.ajax({
+                type: "get",
+                url: url,
+                success: function(data) {
+                    var jsonData = JSON.parse(data);
+                    setList(jsonData.repleList, jsonData.parents);
+                    setPagination(jsonData.pagination);
+                    document.querySelector("#reple-list-container").scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        }
+
+        function formReple(id, repleContents) {
+            $("#updatePostId").val(postId);
+            $("#updateRepleId").val(id);
+            $("#updateRepleContents").text(repleContents);
+        }
+
+        function deleteReple(id) {
+            if (confirm("댓글을 삭제 하시겠습니까?")) {
+                var url = "/reple";
+                var type = "delete";
+                var data = {
+                    "id" : id,
+                    "postId" : postId
+                };
+                var json = JSON.stringify(data);
+
+                $.ajax({
+                    type: type,
+                    url: url,
+                    data: json,
+                    contentType: "application/json; charset=UTF-8",
+                    success: function (data) {
+                        var jsonData = JSON.parse(data);
+                        setList(jsonData.repleList, jsonData.parents);
+                        setPagination(jsonData.pagination);
+                        document.querySelector("#reple-list-container").scrollIntoView({
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            }
+        }
+    </script>
+</th:block>

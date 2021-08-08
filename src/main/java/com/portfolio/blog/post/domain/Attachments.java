@@ -63,17 +63,6 @@ public class Attachments extends BaseTimeEntity {
         this.post = null;
     }
 
-    // Dto to Entity
-    public static Attachments createEntity(AttachmentsDto attachmentsDto) {
-        return Attachments.builder()
-                .id(attachmentsDto.getId() != null ? attachmentsDto.getId() : null)
-                .path(attachmentsDto.getPath())
-                .origin(attachmentsDto.getOrigin())
-                .name(attachmentsDto.getName())
-                .size(attachmentsDto.getSize())
-                .build();
-    }
-
     // AttachmentsResponseDto 로 변환
     public AttachmentsDto parseDto() {
         return AttachmentsDto.builder()
@@ -82,4 +71,5 @@ public class Attachments extends BaseTimeEntity {
                 .name(this.getName())
                 .build();
     }
+
 }

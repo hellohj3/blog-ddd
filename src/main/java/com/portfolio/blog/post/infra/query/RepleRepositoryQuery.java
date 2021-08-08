@@ -11,8 +11,14 @@ public interface RepleRepositoryQuery {
     // 리스트 조회 (검색)
     List<RepleDto> search(RepleSearchDto repleSearchDto);
 
+    // 리스트 조회 (답글)
+    List<RepleDto> searchParent(List<Long> ids);
+
     // 리스트 페이징 (카운트 동시)
     Page<RepleDto> searchPaginationSimple(RepleSearchDto repleSearchDto, Pageable pageable);
+
+    // 리스트 페이징 (카운트 동시)
+    Page<RepleDto> searchPaginationSimple(Long postId, Pageable pageable);
 
     // 리스트 페이징 (카운트 별도)
     Page<RepleDto> searchPaginationComplex(RepleSearchDto repleSearchDto, Pageable pageable);

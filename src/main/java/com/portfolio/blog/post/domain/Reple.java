@@ -30,7 +30,7 @@ public class Reple extends BaseTimeEntity {
     private Account account;
 
     @Column(columnDefinition = "TEXT", nullable = false)
-    private String contents;
+    private String repleContents;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_reple")
@@ -40,17 +40,9 @@ public class Reple extends BaseTimeEntity {
     @Column
     private List<Reple> repleList = new ArrayList<>();
 
-    // Dto to Entity
-    public static Reple createEntity(RepleDto repleDto) {
-        return Reple.builder()
-                .id(repleDto.getId() != null ? repleDto.getId() : null)
-                .contents(repleDto.getContents())
-                .build();
-    }
-
     // 댓글 수정
     public void updateReple(RepleDto repleDto) {
-        this.contents = repleDto.getContents();
+        this.repleContents = repleDto.getRepleContents();
         this.updateDate();
     }
 
@@ -72,6 +64,30 @@ public class Reple extends BaseTimeEntity {
     // 계정 연관관계 해제 메소드
     public void disConnectAccount() {
         this.account = null;
+    }
+
+    // 리플 연결 메소드
+    public void connectParentReple(Reple parentReple) {
+        this.parentReple = parentReple;
+    }
+
+    // 리플 연관관계 해제 메소드
+    public void disConnectParentReple() {
+        this.parentReple = null;
+    }
+
+    // RepleDto 로 변환
+    public RepleDto parseDto() {
+        return RepleDto.builder()
+                .id(this.id)
+                .postId(this.post.getId())
+                .parentId(this.parentReple.id)
+                .author(this.account.getAccountId())
+                .repleContents(this.repleContents)
+                .postTitle(this.post.getTitle())
+                .createdDate(this.getCreatedDate())
+                .modifiedDate(this.getModifiedDate())
+                .build();
     }
 
 }

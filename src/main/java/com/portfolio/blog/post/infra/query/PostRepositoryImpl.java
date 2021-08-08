@@ -76,7 +76,7 @@ public class PostRepositoryImpl implements PostRepositoryQuery {
                 .where(
                         titleContains(postSearchDto.getTitle()),
                         authorEq(postSearchDto.getAuthor()))
-                .orderBy(sortingType(pageable).stream().toArray(OrderSpecifier[]::new))
+                .orderBy(sortingType(pageable).toArray(OrderSpecifier[]::new))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetchResults();
@@ -105,7 +105,7 @@ public class PostRepositoryImpl implements PostRepositoryQuery {
                         titleContains(postSearchDto.getTitle()),
                         authorEq(postSearchDto.getAuthor())
                 )
-                .orderBy(sortingType(pageable).stream().toArray(OrderSpecifier[]::new))
+                .orderBy(sortingType(pageable).toArray(OrderSpecifier[]::new))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
@@ -157,7 +157,7 @@ public class PostRepositoryImpl implements PostRepositoryQuery {
                 Order direction = order.getDirection().isAscending() ? Order.ASC : Order.DESC;
 
                 switch (order.getProperty()) {
-                    case "createdDate":
+                    case "CREATED_DATE":
                         OrderSpecifier<?> orderId = getSortedColumn(direction, post.createdDate, "createdDate");
                         orders.add(orderId);
                         break;

@@ -10,7 +10,7 @@ import java.util.List;
  * Resource 테이블 정보
  * resource_id : bigint(20), resource PK
  * name : text, 리소스 표현식(url 경로, method 경로, ...)
- * type : 리로스 타입(url, method, ...)
+ * type : 리소스 타입(url, method, ...)
  * order_num : 적용 순서(Security는 적용 순서가 중료함)
  *
  * @author 박상재

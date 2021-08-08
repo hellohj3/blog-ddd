@@ -1,29 +1,28 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 
-<th:block th:fragment="create">
-    <div class="modal fade" id="create" role="dialog" aria-labelledby="introHeader" aria-hidden="true" tabindex="-1">
+<th:block th:fragment="update">
+    <div class="modal fade" id="update" role="dialog" aria-labelledby="introHeader" aria-hidden="true" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-body card card-user" style="margin-bottom: 0;">
                     <div class="card-header">
-                        <h5 class="card-title">리플 등록</h5>
+                        <h5 class="card-title">답글 수정</h5>
                     </div>
                     <div class="card-body">
-                        <form th:action="@{/admin/reple}" th:object="${reple}" id="repleForm" method="post">
-                            <input type="hidden" th:field="*{postId}">
-                            <input type="hidden" th:field="*{parentId}">
+                        <form th:action="@{/admin/reple}" id="updateRepleForm" method="post">
+                            <input type="hidden" id="updateRepleId" name="id">
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        <label th:for="repleContents">내용</label>
-                                        <textarea th:field="*{repleContents}" class="form-control"></textarea>
+                                        <label for="updateRepleContents">내용</label>
+                                        <textarea class="form-control" id="updateRepleContents" name="repleContents"></textarea>
                                     </div>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="update ml-auto mr-auto">
-                                    <button type="button" class="btn btn-primary btn-round" onclick="validationForm();">Registration</button>
+                                    <button type="button" class="btn btn-primary btn-round" onclick="updateReple();">Update</button>
                                     <button type="button" class="btn btn-dark btn-round modalCloseBtn" data-dismiss="modal">Close</button>
                                 </div>
                             </div>
@@ -35,19 +34,12 @@
     </div>
 
     <script>
-        function validationForm() {
-            if (!$.trim($("#repleContents").val())) {
-                alert("내용을 입력해주세요.");
-                $("#repleContents").focus();
-                return false;
-            }
-
-            var url = $("#repleForm").attr("action");
-            var type = "post";
+        function updateReple() {
+            var url = $("#updateRepleForm").attr("action");
+            var type = "put";
             var data = {
-                "parentId" : $("#parentId").val(),
-                "postId" : $("#postId").val(),
-                "repleContents" : $("#repleContents").val()
+                "id" : $("#updateRepleId").val(),
+                "repleContents" : $("#updateRepleContents").val()
             };
             var json = JSON.stringify(data);
 

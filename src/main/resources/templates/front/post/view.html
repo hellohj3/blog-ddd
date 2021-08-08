@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="front/layouts/layout-ver-1">
+
+<th:block layout:fragment="contents" th:object="${post}">
+    <style>
+        #contents img {
+            width: 100%;
+        }
+    </style>
+
+    <section id="intro">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6 col-lg-offset-3 col-md-8 col-md-offset-2 text-center">
+                    <div class="intro animate-box">
+                        <h2 th:text="${post.title}"></h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <main id="main">
+        <div class="container">
+            <div class="col-md-8 col-md-offset-2 animate-box width" style="text-align: right;">
+                <span th:text="${post.author}"></span>&nbsp;
+                <span th:text="${#temporals.format(post.createdDate,'yyyy-MM-dd')}"></span>
+            </div>
+            <div class="col-md-8 col-md-offset-2 animate-box width" id="contents"></div>
+            <script src="/assets/front/js/jquery.min.js"></script>
+            <script th:inline="javascript">
+                /*<![CDATA[*/
+                var str = [[${post.contents}]];
+                $("#contents").html(str);
+                /*]]*/
+            </script>
+        </div>
+    </main>
+
+    <th:block th:replace="front/reple/list :: reples(${post.id})"></th:block>
+</th:block>

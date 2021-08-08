@@ -8,13 +8,13 @@ import lombok.*;
 @Setter
 public class RepleSearchDto {
     private String author;
-    private String contents;
+    private String repleContent;
 
     @Builder
     @QueryProjection
-    public RepleSearchDto(String author, String contents) {
+    public RepleSearchDto(String author, String repleContent) {
         this.author = author;
-        this.contents = contents;
+        this.repleContent = repleContent;
     }
 
 }

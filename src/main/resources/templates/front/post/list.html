@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="front/layouts/layout-ver-1">
+
+<th:block layout:fragment="contents">
+    <section id="intro">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6 col-lg-offset-3 col-md-8 col-md-offset-2 text-center">
+                    <div class="intro animate-box">
+                        <h2>개발자 박상재의 기록공간</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="work">
+        <div class="container">
+            <p class="animate-box text-center"></p>
+            <div class="row">
+                <p th:if="${list.isEmpty()}" th:text="'포스팅 기록이 없습니다.'" class="text-center"></p>
+                <th:block th:unless="${list.isEmpty()}" >
+                    <div th:each="post: ${list}" class="col-md-6">
+                        <div class="fh5co-grid animate-box"
+                             style="background-image: url(/assets/front/images/work-1.jpg);">
+                            <a th:href="@{/post/{id} (id=${post.id})}" class="image-popup text-center">
+                                <div class="work-title">
+                                    <h3 th:text="${post.title}"></h3>
+                                    <span th:text="${post.author}"></span>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </th:block>
+            </div>
+        </div>
+    </section>
+</th:block>

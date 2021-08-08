@@ -3,6 +3,7 @@ package com.portfolio.blog.post.application.service;
 import com.portfolio.blog.account.domain.Account;
 import com.portfolio.blog.account.infra.AccountRepository;
 import com.portfolio.blog.common.util.handler.AttachmentsHandler;
+import com.portfolio.blog.common.util.handler.CustomFilter;
 import com.portfolio.blog.post.domain.Attachments;
 import com.portfolio.blog.post.domain.Post;
 import com.portfolio.blog.post.infra.AttachmentsRepository;
@@ -45,6 +46,10 @@ public class PostService {
     // 포스트 저장
     @Transactional
     public void savePost(PostDto postDto) throws Exception {
+        if (CustomFilter.xssFilter(postDto.getContents())) {
+            throw new IllegalArgumentException("XSS 필터링");
+        }
+
         Account account =
                 accountRepository.findById(SecurityContextHolder.getContext().getAuthentication().getName())
                         .orElseThrow(() -> new InternalAuthenticationServiceException("계정정보 없음"));
@@ -57,12 +62,16 @@ public class PostService {
             attachmentsList.add(findByAttachments);
         }
         attachmentsHandler.copyFile(attachmentsDtos.stream().map(AttachmentsDto::getName).collect(Collectors.toList()));
-        postRepository.save(Post.createEntity(postDto, account, attachmentsList));
+        postRepository.save(postDto.createEntity(account, attachmentsList));
     }
 
     // 포스트 수정
     @Transactional
     public void updatePost(PostDto postDto) throws Exception {
+        if (CustomFilter.xssFilter(postDto.getContents())) {
+            throw new IllegalArgumentException("XSS 필터링");
+        }
+        
         Optional<Post> findByOptional = postRepository.findById(postDto.getId());
 
         if (findByOptional.isPresent()) {

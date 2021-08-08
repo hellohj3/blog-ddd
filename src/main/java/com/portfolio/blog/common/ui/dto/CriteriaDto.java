@@ -12,6 +12,8 @@ public class CriteriaDto {
     int totalPage;
     int startPage;
     int endPage;
+    int previousPage;
+    int nextPage;
     boolean first;
     boolean last;
 
@@ -21,8 +23,10 @@ public class CriteriaDto {
         this.pageSize = page.getPageable().getPageSize();
         this.totalPage = page.getTotalPages();
         this.startPage = (int) Math.floor(currentPage / pageSize * pageSize + 1);
-        this.endPage = ((startPage + pageSize -1) > totalPage) ? totalPage : (startPage + pageSize -1);
+        this.endPage = Math.min((startPage + pageSize - 1), totalPage);
         this.first = page.isFirst();
         this.last = page.isLast();
+        this.previousPage = Math.max((startPage - 1), 1);
+        this.nextPage = Math.min((endPage + 1), totalPage);
     }
 }

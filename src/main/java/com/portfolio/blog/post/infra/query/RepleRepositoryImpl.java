@@ -30,6 +30,7 @@ import java.util.stream.Collectors;
 import static com.portfolio.blog.account.domain.QAccount.account;
 import static com.portfolio.blog.post.domain.QAttachments.attachments;
 import static com.portfolio.blog.post.domain.QPost.post;
+import static com.portfolio.blog.post.domain.QReple.*;
 import static com.portfolio.blog.post.domain.QReple.reple;
 import static org.springframework.util.StringUtils.hasText;
 
@@ -56,7 +57,7 @@ public class RepleRepositoryImpl implements RepleRepositoryQuery {
                         reple.post.id,
                         reple.parentReple.id,
                         reple.account.accountId,
-                        reple.contents,
+                        reple.repleContents,
                         reple.post.title,
                         reple.createdDate,
                         reple.modifiedDate
@@ -66,8 +67,38 @@ public class RepleRepositoryImpl implements RepleRepositoryQuery {
                 .leftJoin(reple.post, post)
                 .where(
                         authorEq(repleSearchDto.getAuthor()),
-                        contentsContains(repleSearchDto.getContents()))
-                .orderBy(sortingType(pageable).stream().toArray(OrderSpecifier[]::new))
+                        repleContentContains(repleSearchDto.getRepleContent()),
+                        reple.parentReple.isNull())
+                .orderBy(sortingType(pageable).toArray(OrderSpecifier[]::new))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetchResults();
+        List<RepleDto> contents = results.getResults();
+        long total = results.getTotal();
+
+        return new PageImpl<>(contents, pageable, total);
+    }
+    // 포스트 연관관계 리플 리스트 페이징 (카운트 동시)
+    @Override
+    public Page<RepleDto> searchPaginationSimple(Long postId, Pageable pageable) {
+        QueryResults<RepleDto> results = queryFactory
+                .select(new QRepleDto(
+                        reple.id,
+                        reple.post.id,
+                        reple.parentReple.id,
+                        reple.account.accountId,
+                        reple.repleContents,
+                        reple.post.title,
+                        reple.createdDate,
+                        reple.modifiedDate
+                ))
+                .from(reple)
+                .leftJoin(reple.account, account)
+                .leftJoin(reple.post, post)
+                .where(
+                        postIdEq(postId),
+                        reple.parentReple.isNull())
+                .orderBy(sortingType(pageable).toArray(OrderSpecifier[]::new))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetchResults();
@@ -77,8 +108,30 @@ public class RepleRepositoryImpl implements RepleRepositoryQuery {
         return new PageImpl<>(contents, pageable, total);
     }
 
-    // 리스트 페이징 (카운트 별도)
+    // 리스트 (답글)
+    @Override
+    public List<RepleDto> searchParent(List<Long> ids) {
+        return queryFactory
+                .select(new QRepleDto(
+                        reple.id,
+                        reple.post.id,
+                        reple.parentReple.id,
+                        reple.account.accountId,
+                        reple.repleContents,
+                        reple.post.title,
+                        reple.createdDate,
+                        reple.modifiedDate
+                ))
+                .from(reple)
+                .leftJoin(reple.account, account)
+                .leftJoin(reple.post, post)
+                .where(
+                        reple.parentReple.isNotNull(),
+                        reple.parentReple.id.in(ids))
+                .fetch();
+    }
 
+    // 리스트 페이징 (카운트 별도)
     @Override
     public Page<RepleDto> searchPaginationComplex(RepleSearchDto repleSearchDto, Pageable pageable) {
         return null;
@@ -87,7 +140,22 @@ public class RepleRepositoryImpl implements RepleRepositoryQuery {
 
     @Override
     public RepleDto findByIdToDto(Long id) {
-        return null;
+        return queryFactory
+                .select(new QRepleDto(
+                        reple.id,
+                        reple.post.id,
+                        reple.parentReple.id,
+                        reple.account.accountId,
+                        reple.repleContents,
+                        reple.post.title,
+                        reple.createdDate,
+                        reple.modifiedDate
+                ))
+                .from(reple)
+                .leftJoin(reple.account, account)
+                .leftJoin(reple.post, post)
+                .where(reple.id.eq(id))
+                .fetchOne();
     }
 
     // 동적 쿼리 (작성자)
@@ -96,8 +164,13 @@ public class RepleRepositoryImpl implements RepleRepositoryQuery {
     }
 
     // 동적 쿼리 (내용)
-    private BooleanExpression contentsContains(String contents) {
-        return hasText(contents) ? reple.contents.contains(contents) : null;
+    private BooleanExpression repleContentContains(String repleContent) {
+        return hasText(repleContent) ? reple.repleContents.contains(repleContent) : null;
+    }
+
+    // 동적 쿼리 (포스트 아이디)
+    private BooleanExpression postIdEq(Long postId) {
+        return postId != null ? reple.post.id.eq(postId) : null;
     }
 
     // 동적 쿼리 (정렬)
@@ -109,7 +182,7 @@ public class RepleRepositoryImpl implements RepleRepositoryQuery {
                 Order direction = order.getDirection().isAscending() ? Order.ASC : Order.DESC;
 
                 switch (order.getProperty()) {
-                    case "createdDate":
+                    case "CREATED_DATE":
                         OrderSpecifier<?> orderId = getSortedColumn(direction, reple.createdDate, "createdDate");
                         orders.add(orderId);
                         break;

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<th:block th:fragment="update">
+    <div class="modal fade" id="update" role="dialog" aria-labelledby="introHeader" aria-hidden="true" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body card card-user" style="margin-bottom: 0;">
+                    <div class="card-header">
+                        <h3 class="card-title">리플 수정</h3>
+                    </div>
+                    <div class="card-body">
+                        <form th:action="@{/reple}" id="updateRepleForm" method="post">
+                            <input type="hidden" id="updatePostId" name="postId">
+                            <input type="hidden" id="updateRepleId" name="id">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="updateRepleContents">내용</label>
+                                        <textarea class="form-control" id="updateRepleContents" name="repleContents"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="update ml-auto mr-auto" style="text-align: center;">
+                                    <button type="button" class="btn btn-primary btn-round" style="float: none;" onclick="updateReple();">Update</button>
+                                    <button type="button" class="btn btn-dark btn-round" id="modalCloseBtn" data-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function updateReple() {
+            var url = $("#updateRepleForm").attr("action");
+            var type = "put";
+            var data = {
+                "id" : $("#updateRepleId").val(),
+                "postId" : $("#updatePostId").val(),
+                "repleContents" : $("#updateRepleContents").val()
+            };
+            var json = JSON.stringify(data);
+
+            $.ajax({
+                type: type,
+                url: url,
+                data: json,
+                contentType: "application/json; charset=UTF-8",
+                success: function(data) {
+                    var jsonData = JSON.parse(data);
+                    $("#modalCloseBtn").trigger("click");
+                    setList(jsonData.repleList);
+                    setPagination(jsonData.pagination);
+                    $("#updateRepleContents").val("");
+                    document.querySelector("#reple-list-container").scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        }
+    </script>
+</th:block>

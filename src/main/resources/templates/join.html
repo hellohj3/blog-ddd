@@ -37,39 +37,20 @@ Coded by www.creative-tim.com
 
 <body class="">
     <div class="wrapper main-panel" style="width: 100%;">
-        <div th:if="${param.error} and ${session}" th:with="errorMsg=${session['SPRING_SECURITY_LAST_EXCEPTION']}">
-            <div class="alert alert-warning alert-dismissible fade show">
-                Reason: <span th:text="${errorMsg}"></span>
-            </div>
-        </div>
-        <div th:if="${param.logout}" class="alert-default">
-            <script>
-                location.href = "/";
-            </script>
-        </div>
-        <div th:if="${resultMsg}" class="alert alert-success alert-dismissible fade show">
-            <button type="button" aria-hidden="true" class="close" data-dismiss="alert" aria-label="Close">
-                <i class="nc-icon nc-simple-remove"></i>
-            </button>
-            <span th:text="${resultMsg}"></span>
-        </div>
         <div id="alert-cont"></div>
 
-        <div class="col-md-2" style="margin: 200px auto 0">
+        <div class="col-md-10" style="margin: 200px auto 0">
             <div class="card card-user align-self-center">
-                <div class="image">
-                    <img src="/assets/admin/img/damir-bosnjak.jpg" alt="...">
-                </div>
                 <div class="card-header bg-light" style="width: 100%">
-                    <h5 class="title" style="text-align: center;">Sign-in</h5>
+                    <h5 class="card-title">Join</h5>
                 </div>
 
                 <div class="card-body">
-                    <form th:action="@{/login_proc}" th:object="${securityAccount}" id="loginForm" method="post">
+                    <form th:action="@{/account}" th:object="${account}" id="joinForm" method="post">
                         <div class="row">
                             <div class="col-md-11 pr-1">
                                 <label>ID</label>
-                                <input th:field="*{username}" type="text" class="form-control" required="required" placeholder="User Id" value="" onkeypress="if (event.keyCode == 13) validationForm();">
+                                <input th:field="*{accountId}" type="text" class="form-control" required="required" placeholder="User Id" value="" onkeypress="if (event.keyCode == 13) validationForm();">
                             </div>
                         </div>
                         <div class="row">
@@ -79,9 +60,25 @@ Coded by www.creative-tim.com
                             </div>
                         </div>
                         <div class="row">
+                            <div class="col-md-7 pr-1">
+                                <label>Name</label>
+                                <input th:field="*{name}" type="text" class="form-control" required="required" placeholder="User Name" value="" onkeypress="if (event.keyCode == 13) validationForm();">
+                            </div>
+                            <div class="col-md-4 pr-1">
+                                <label>Age</label>
+                                <input th:field="*{age}" type="number" class="form-control" required="required" placeholder="User Age" value="" onkeypress="if (event.keyCode == 13) validationForm();">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-11 pr-1">
+                                <label>Email</label>
+                                <input th:field="*{email}" type="email" class="form-control" required="required" placeholder="User Email" value="" onkeypress="if (event.keyCode == 13) validationForm();">
+                            </div>
+                        </div>
+                        <div class="row">
                             <div class="update ml-auto mr-auto" style="margin: 15px 1px">
-                                <button type="button" class="btn btn-primary btn-round" onclick="validationForm()">Sign-in</button>
-                                <button type="button" class="btn btn-default btn-round" onclick="location.href='/account'">Join</button>
+                                <button type="button" class="btn btn-primary btn-round" onclick="validationForm()">Join</button>
+                                <button type="button" class="btn btn-default btn-round" onclick="location.href='/'">Back</button>
                             </div>
                         </div>
                     </form>
@@ -93,11 +90,26 @@ Coded by www.creative-tim.com
     <th:block th:replace="admin/fragments/scripts :: scripts"></th:block>
     <script>
         function validationForm() {
-            if (!$("#username").val()) {
+            if (!$("#accountId").val()) {
                 createAlert("#alert-cont", "alert alert-primary alert-dismissible fade show"
                     ,"ID를 입력해주세요");
-                $("#username").focus();
+                $("#accountId").focus();
                 return false;
+            } else {
+                var url = "account/"+$("#accountId").val();
+
+                $.ajax({
+                    type: "get",
+                    url: url,
+                    success: function(data) {
+                        if (data != "pass") {
+                            createAlert("#alert-cont", "alert alert-danger alert-dismissible fade show"
+                                ,"ID가 중복됩니다.");
+                            $("#accountId").focus();
+                            return false;
+                        }
+                    }
+                });
             }
 
             if (!$("#password").val()) {
@@ -107,7 +119,21 @@ Coded by www.creative-tim.com
                 return false;
             }
 
-            $("#loginForm").submit();
+            if (!$("#name").val()) {
+                createAlert("#alert-cont", "alert alert-primary alert-dismissible fade show"
+                    ,"이름을 입력해주세요");
+                $("#name").focus();
+                return false;
+            }
+
+            if (!$("#email").val()) {
+                createAlert("#alert-cont", "alert alert-primary alert-dismissible fade show"
+                    ,"이메일을 입력해주세요");
+                $("#email").focus();
+                return false;
+            }
+
+            $("#joinForm").submit();
         }
     </script>
 </body>

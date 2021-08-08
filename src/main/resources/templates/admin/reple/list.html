@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
-      layout:decorator="admin/layouts/layout-ver-1">
+      layout:decorator="admin/layouts/layout-ver-reple">
 
 <th:block layout:fragment="contents">
     <div class="content">
@@ -18,7 +18,8 @@
                             <table class="table">
                                 <thead class="text-primary col-md-12">
                                 <th class="col-md-4">내용</th>
-                                <th class="col-md-3">관련포스트</th>
+                                <th colspan="col-md-1"></th>
+                                <th class="col-md-2">관련포스트</th>
                                 <th class="col-md-1 text-center">작성자</th>
                                 <th class="col-md-2 text-center">작성일</th>
                                 <th class="col-md-2 text-center">기능</th>
@@ -27,9 +28,16 @@
                                 <tr th:if="${list.isEmpty()}">
                                     <td colspan="5" style="text-align: center">댓글 기록이 없습니다.</td>
                                 </tr>
-                                <th:block th:unless="${list.isEmpty()}" >
-                                    <tr th:each="reple: ${list}">
-                                        <td th:text="${reple.contents}"></td>
+                                <th:block th:unless="${list.isEmpty()}" th:each="reple: ${list}">
+                                    <tr>
+                                        <td th:text="${reple.repleContents}"></td>
+                                        <td>
+                                            <th:block th:if="${#lists.contains(parentIds, reple.id)}">
+                                                <a class="accordion-button collapsed" type="button" data-toggle="collapse" th:attr="data-target='.parentReple'+${reple.id}">
+                                                    <i class="nc-icon nc-minimal-down"></i>
+                                                </a>
+                                            </th:block>
+                                        </td>
                                         <td><a th:text="${reple.postTitle}" th:href="@{/admin/post/{id} (id=${reple.postId})}"></a></td>
                                         <td class=" text-center" th:text="${reple.author}"></td>
                                         <td class=" text-center" th:text="${#temporals.format(reple.createdDate,'yyyy-MM-dd HH:mm:ss')}"></td>
@@ -39,16 +47,32 @@
                                             <button type="button" class="btn btn-danger btn-round" th:onclick="'deleteReple('+${reple.id}+')'">삭제</button>
                                         </td>
                                     </tr>
+                                    <th:block th:if="${parents}" th:each="parent: ${parents}">
+                                        <th:block th:if="${parent.parentId eq reple.id}">
+                                            <tr th:classappend="parentReple+${parent.parentId}" class="accordion-collapse collapse" style="background: #f4f3ef;">
+                                                <td th:text="${parent.repleContents}"></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td class=" text-center" th:text="${parent.author}"></td>
+                                                <td class=" text-center" th:text="${#temporals.format(parent.createdDate,'yyyy-MM-dd HH:mm:ss')}"></td>
+                                                <td class=" text-center">
+                                                    <button type="button" class="btn btn-dark btn-round"
+                                                            data-toggle="modal" data-target="#update" th:onclick="'setRelpeId('+${parent.id}+')'">수정</button>
+                                                    <button type="button" class="btn btn-danger btn-round" th:onclick="'deleteReple('+${parent.id}+')'">삭제</button>
+                                                </td>
+                                            </tr>
+                                        </th:block>
+                                    </th:block>
                                 </th:block>
                                 </tbody>
                             </table>
                             <div class="pagination-container" th:if="${pagination.totalPage ne 0}">
                                 <div class="pagination p1" style="display: block;">
-                                    <a th:classappend="${pagination.first eq true} ? 'disabled'" th:href="${pagination.first eq true} ? '#' : @{/admin/reples(page=${#numbers.formatDecimal(pagination.startPage - pagination.pageSize, 0, -1)})}">&lt;</a>
+                                    <a th:style="${pagination.first eq true} ? 'display: none;'" th:href="${pagination.first eq true} ? '#' : @{/admin/reples(page=${pagination.previousPage} - 1)}">&lt;</a>
                                     <th:block th:each="page: ${#numbers.sequence(pagination.startPage, pagination.endPage)}">
-                                        <a th:classappend="${page == pagination.currentPage + 1} ? 'is-active'" th:text="${page}" th:href="@{/admin/reples(page=1)}"></a>
+                                        <a th:classappend="${page == pagination.currentPage + 1} ? 'is-active'" th:text="${page}" th:href="@{/admin/reples(page=${page}-1)}"></a>
                                     </th:block>
-                                    <a th:classappend="${pagination.last eq true} ? 'disabled'" th:href="${pagination.last} ? '#' : @{/admin/reples(page=${#numbers.formatDecimal(pagination.startPage - pagination.pageSize, 0, -1)})}">></a>
+                                    <a th:style="${pagination.last eq true} ? 'display: none;'" th:href="${pagination.last} ? '#' : @{/admin/reples(page=${pagination.nextPage} - 1)}">></a>
                                 </div>
                             </div>
                         </div>
@@ -57,11 +81,24 @@
             </div>
         </div>
         <th:block th:replace="admin/reple/create :: create"></th:block>
+        <th:block th:replace="admin/reple/update :: update"></th:block>
 
         <script>
             function setPostId(postId, parentId) {
                 $("#postId").val(postId);
                 $("#parentId").val(parentId);
+            }
+
+            function setRelpeId(id) {
+                $.ajax({
+                    type: "get",
+                    url: "/admin/reple/"+id,
+                    success: function (data) {
+                        var jsonData = JSON.parse(data);
+                        $("#updateRepleId").val(id);
+                        $("#updateRepleContents").val(jsonData.parentReple.repleContents);
+                    }
+                });
             }
 
             function deleteReple(id) {
