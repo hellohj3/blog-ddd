@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.MultiValueMap;
@@ -45,6 +46,7 @@ public class AdminPostController {
     }
 
     // 등록 폼
+    @PreAuthorize("isAuthenticated() and (hasRole('ROLE_SUPER'))")
     @GetMapping("/admin/post")
     public String formPost(Model model) {
         model.addAttribute("post"
@@ -57,6 +59,7 @@ public class AdminPostController {
     }
 
     // 등록
+    @PreAuthorize("isAuthenticated() and (hasRole('ROLE_SUPER'))")
     @PostMapping("/admin/post")
     public String createPost(Model model, @Valid PostDto postDto,
                              @RequestParam("attachmentsSrcs") String attachmentsSrcs) throws Exception {
@@ -70,6 +73,7 @@ public class AdminPostController {
     }
 
     // 수정 폼
+    @PreAuthorize("isAuthenticated() and (hasRole('ROLE_SUPER'))")
     @GetMapping("/admin/post/{id}")
     public String updateFormPost(@PathVariable("id") Long id, Model model) {
         model.addAttribute("post", postService.findPost(id));
@@ -78,6 +82,7 @@ public class AdminPostController {
     }
 
     // 수정
+    @PreAuthorize("isAuthenticated() and (hasRole('ROLE_SUPER'))")
     @PutMapping("/admin/post/{id}")
     @ResponseBody
     public String updatePost(@PathVariable("id") Long id, @Valid PostDto postDto,
@@ -92,6 +97,7 @@ public class AdminPostController {
     }
 
     // 삭제
+    @PreAuthorize("isAuthenticated() and (hasRole('ROLE_SUPER'))")
     @DeleteMapping("/admin/post/{id}")
     @ResponseBody
     public String deletePost(@PathVariable("id") Long id) throws Exception {
@@ -101,6 +107,7 @@ public class AdminPostController {
     }
 
     // 첨부파일 등록
+    @PreAuthorize("isAuthenticated() and (hasRole('ROLE_SUPER'))")
     @PostMapping("/admin/attachments")
     @ResponseBody
     public List<AttachmentsDto> createAttachments(

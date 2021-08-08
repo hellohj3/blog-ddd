@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -60,6 +61,7 @@ public class AdminRepleController {
     }
 
     // 등록
+    @PreAuthorize("isAuthenticated() and (hasRole('ROLE_SUPER'))")
     @PostMapping("/admin/reple")
     @ResponseBody
     public String createReple(@RequestBody RepleDto repleDto) throws Exception {
@@ -69,6 +71,7 @@ public class AdminRepleController {
     }
 
     // 수정
+    @PreAuthorize("isAuthenticated() and (hasRole('ROLE_SUPER'))")
     @PutMapping("/admin/reple")
     @ResponseBody
     public String updateReple(@RequestBody RepleDto repleDto) throws Exception {
@@ -78,6 +81,7 @@ public class AdminRepleController {
     }
 
     // 삭제
+    @PreAuthorize("isAuthenticated() and (hasRole('ROLE_SUPER'))")
     @DeleteMapping("/admin/reple/{id}")
     @ResponseBody
     public String deleteReple(@PathVariable("id") Long id) throws Exception {
