@@ -47,14 +47,17 @@ public class IpAddressVoter implements AccessDecisionVoter<Object> {
         String address = details.getRemoteAddress();
         List<String> accessIpList = resourceService.getAccessIpList();
 
-        int result = ACCESS_DENIED;
+        /*int result = ACCESS_DENIED;
 
         for (String ipAddress : accessIpList) {
 
             if (address.equals(ipAddress)) {
                 return ACCESS_ABSTAIN;
             }
-        }
+        }*/
+
+        // 테스트 개방을 위해 주석처리 되었음
+        int result = ACCESS_ABSTAIN;
 
         if(result == ACCESS_DENIED){
             throw new AccessDeniedException("Invalid ipAddress can not accessed");

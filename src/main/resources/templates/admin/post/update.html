@@ -62,6 +62,8 @@
             });
             $("#attachmentsSrcs").val(src.substring(0, src.length-1));
 
+            $("#contents").text(globalEditor.getData());
+
             $.ajax({
                 type: "put",
                 url: url,
