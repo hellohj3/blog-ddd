@@ -59,6 +59,7 @@
         var postId = [[${postId}]];
         var accountId = "[[${accountId}]]";
         /*]]*/
+        var isFirst = true;
         
         $(document).ready(function () {
             doPagination("/reples/"+postId);
@@ -160,9 +161,12 @@
                     var jsonData = JSON.parse(data);
                     setList(jsonData.repleList, jsonData.parents);
                     setPagination(jsonData.pagination);
-                    document.querySelector("#reple-list-container").scrollIntoView({
-                        behavior: 'smooth'
-                    });
+                    if (!isFirst) {
+                        document.querySelector("#reple-list-container").scrollIntoView({
+                            behavior: 'smooth'
+                        });
+                        isFirst = false;
+                    }
                 }
             });
         }
