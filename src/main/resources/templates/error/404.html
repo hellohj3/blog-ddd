@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>MyHyem's - Error</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link type="text/css" rel="stylesheet" href="/assets/error/css/error.css">
+</head>
+<body>
+<div id="notfound">
+    <div class="notfound">
+        <div class="notfound-404">
+            <h1 style="width: 100%">:(</h1>
+        </div>
+        <h2 th:text="${status + ' - ' + error}"></h2>
+        <p th:text="${message}"></p>
+        <a th:href="@{/}">home page</a>
+    </div>
+</div>
+</body>
+</html>

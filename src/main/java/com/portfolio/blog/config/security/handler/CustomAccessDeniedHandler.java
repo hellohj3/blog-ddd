@@ -21,4 +21,13 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
         String deniedUrl = errorPage + "?exception=" + accessDeniedException.getMessage();
         response.sendRedirect(deniedUrl);
     }
+
+    public void setErrorPage(String errorPage) {
+        if ((errorPage != null) && !errorPage.startsWith("/")) {
+            throw new IllegalArgumentException("errorPage must begin with '/'");
+        }
+
+        this.errorPage = errorPage;
+    }
+
 }
