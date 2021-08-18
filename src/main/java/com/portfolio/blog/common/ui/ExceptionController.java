@@ -18,7 +18,7 @@ public class ExceptionController {
         model.addAttribute("error", "Forbidden");
         model.addAttribute("message", exception);
 
-        return "/error/404";
+        return "error/404";
     }
 
 }
