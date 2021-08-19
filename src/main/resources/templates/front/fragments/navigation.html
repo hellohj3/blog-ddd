@@ -14,8 +14,8 @@
                 <div class="col-md-6">
                     <ul class="nav text-center">
                         <li class="active"><a th:href="@{/}"><span>Work</span></a></li>
-                        <li><a href="javascript:alert('준비중 입니다.');">About</a></li>
-                        <li><a href="javascript:alert('준비중 입니다.');">History</a></li>
+                        <!--<li><a href="javascript:alert('준비중 입니다.');">About</a></li>
+                        <li><a href="javascript:alert('준비중 입니다.');">History</a></li>-->
                         <li sec:authorize="!isAuthenticated()"><a th:href="@{/login}">Sign-in</a></li>
                         <li sec:authorize="isAuthenticated()"><a th:href="@{/logout}">Sign-out</a></li>
                     </ul>

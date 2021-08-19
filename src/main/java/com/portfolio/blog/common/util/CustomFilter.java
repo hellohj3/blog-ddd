@@ -1,4 +1,4 @@
-package com.portfolio.blog.common.util.handler;
+package com.portfolio.blog.common.util;
 
 import java.util.Locale;
 

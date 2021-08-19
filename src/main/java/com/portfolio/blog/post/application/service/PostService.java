@@ -3,7 +3,7 @@ package com.portfolio.blog.post.application.service;
 import com.portfolio.blog.account.domain.Account;
 import com.portfolio.blog.account.infra.AccountRepository;
 import com.portfolio.blog.common.util.handler.AttachmentsHandler;
-import com.portfolio.blog.common.util.handler.CustomFilter;
+import com.portfolio.blog.common.util.CustomFilter;
 import com.portfolio.blog.post.domain.Attachments;
 import com.portfolio.blog.post.domain.Post;
 import com.portfolio.blog.post.infra.AttachmentsRepository;
@@ -16,7 +16,6 @@ import org.springframework.security.authentication.InternalAuthenticationService
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.ObjectUtils;
 
 import java.util.ArrayList;
 import java.util.List;
